@@ -1,0 +1,1 @@
+{"version":3,"file":"video-provider.js","sourceRoot":"","sources":["../../src/providers/video-provider.ts"],"names":[],"mappings":";;AA2BA,kCAGC;AAHD,SAAgB,WAAW,CAAC,QAAgB,EAAE,MAAc;IAC1D,MAAM,IAAI,GAAG,QAAQ,CAAC,WAAW,EAAE,CAAC,OAAO,CAAC,KAAK,EAAE,EAAE,CAAC,CAAC;IACvD,OAAO,IAAI,KAAK,MAAM,IAAI,IAAI,CAAC,QAAQ,CAAC,IAAI,MAAM,EAAE,CAAC,CAAC;AACxD,CAAC"}

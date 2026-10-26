@@ -1,0 +1,28 @@
+{
+  "name": "reelfetch-api",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "start": "node dist/main.js",
+    "start:dev": "tsx watch src/main.ts",
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "tsx --test src/common/api-error.test.ts src/security/url-safety.test.ts src/providers/facebook/facebook-url.test.ts src/providers/facebook/facebook-redirect.test.ts src/providers/facebook/facebook.provider.test.ts src/providers/provider-registry.test.ts"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.1.6",
+    "@nestjs/core": "^11.1.6",
+    "@nestjs/platform-express": "^11.1.6",
+    "@nestjs/throttler": "^6.4.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.2",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/node": "^22.19.0",
+    "tsx": "^4.20.5",
+    "typescript": "~5.9.3"
+  }
+}

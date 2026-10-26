@@ -1,0 +1,389 @@
+# Task: Upgrade My Existing Website into a Scalable Multi-Platform Video Downloader Platform
+
+Act as a senior product designer, UI/UX engineer, frontend architect, and monetization-focused web designer.
+
+I have already built the initial UI/UX design for a video downloader website using Replit. Modify the EXISTING project to support a scalable, multi-platform video downloader experience.
+
+Do not create a completely new project or discard my existing design. Inspect the current project first, preserve its visual identity, and improve its structure, layout, components, and user experience.
+
+The long-term vision is to build one website where users can paste a video URL from a supported platform, view available download options, select a quality, and download the video when a legitimate and authorized download source is available.
+
+Potential platforms include:
+- Facebook Reels and Facebook videos
+- YouTube
+- TikTok
+- Instagram Reels and videos
+- X (Twitter) videos
+- Pinterest videos
+- Reddit videos
+- Other platforms that may be supported in the future
+
+Important: These platforms do not all permit the same downloading methods. Do not imply that every platform is currently supported or that every video is downloadable. The interface must distinguish between implemented, planned, and unavailable integrations. Respect platform terms, copyright, access controls, and applicable API restrictions.
+
+My business goals are:
+1. Build a scalable multi-platform website.
+2. Attract organic traffic through SEO.
+3. Prepare dedicated advertising placements for future Google AdSense integration.
+4. Keep the design professional, mobile-friendly, fast, and easy to maintain.
+
+## 1. Preserve and Improve the Existing Design
+
+First inspect the existing Replit project, its routes, components, styling, and dependencies.
+
+Keep the existing design wherever possible.
+
+Improve the design to make it feel like a polished, modern SaaS utility platform.
+
+Design direction:
+- Clean white or light-neutral background.
+- Deep navy typography.
+- A consistent blue accent color.
+- Subtle borders and shadows.
+- Rounded cards and input fields.
+- Generous whitespace.
+- Consistent Lucide icons.
+- Excellent mobile responsiveness.
+- Clear typography and visual hierarchy.
+
+Avoid clutter, excessive gradients, unnecessary animations, misleading download buttons, and intrusive popups.
+
+Keep the brand name and visual tokens configurable so the brand can be changed later.
+
+## 2. Create a Multi-Platform Homepage
+
+Update the homepage to support multiple video platforms rather than appearing to be exclusively a Facebook downloader.
+
+Suggested headline:
+
+"Download Videos from Supported Platforms"
+
+Suggested subtitle:
+
+"Paste a video link to explore available download options in one simple interface."
+
+The hero section should include:
+- A large URL input field.
+- A paste-from-clipboard button.
+- A clear-input button.
+- A prominent "Find Video" button.
+- A loading state.
+- A clear validation and error area.
+- A privacy-conscious usage note.
+- A subtle list of currently supported platforms.
+
+Users should be able to paste a video URL without first manually choosing a platform.
+
+The website should identify the platform from the hostname and route the request to the corresponding platform configuration.
+
+If automatic platform detection fails, display a clear error and a link to supported-platform information.
+
+Do not display a successful video result until an actual provider response confirms it.
+
+## 3. Build a Platform Registry for Future Scalability
+
+Design the frontend around a reusable platform registry rather than hardcoding platform logic throughout the UI.
+
+Each platform entry should support fields such as:
+- id
+- name
+- hostname patterns
+- icon
+- short description
+- status
+- availability message
+- optional guide URL
+- optional brand accent configuration
+
+Use explicit statuses such as:
+- Available
+- Planned
+- Unavailable
+
+Only mark a platform as Available when its integration is genuinely implemented and tested.
+
+Planned integrations must not appear to be working download services.
+
+Use this registry to power:
+- Platform cards.
+- Supported-platform lists.
+- Platform selection controls.
+- URL platform detection.
+- Platform-specific help text.
+- Future platform landing pages.
+
+Do not place the entire implementation in one large component.
+
+## 4. Add a Supported Platforms Section
+
+Create a responsive platform grid on the homepage.
+
+Each platform card should include:
+- Platform icon or suitable neutral icon.
+- Platform name.
+- A short description.
+- An availability badge.
+- An appropriate action.
+
+Examples:
+- Facebook — Reels and video links.
+- YouTube — Video links.
+- TikTok — Video links.
+- Instagram — Reels and video links.
+- X — Video posts.
+- Pinterest — Video pins.
+- Reddit — Video posts.
+
+Use actual platform-specific branding assets only when appropriately available. Do not imitate official logos incorrectly.
+
+For platforms that are not yet integrated, show a subtle "Coming Soon" or "Not Available Yet" state.
+
+Do not let users believe that planned integrations can already download videos.
+
+Keep the platform grid easy to extend by adding a new registry entry and the necessary provider implementation.
+
+## 5. Create a Platform-Agnostic Video Result Card
+
+Update the video result UI so it works for any supported provider.
+
+The reusable result card should display:
+- Video thumbnail, if available.
+- Video title, if available.
+- Platform name.
+- Duration, if available.
+- File size, if available.
+- Available video formats and quality options.
+- A clear quality selector.
+- A prominent download action.
+- Useful loading and error states.
+
+Quality options must come from actual provider data.
+
+Do not invent 720p, HD, MP3, or other formats when the provider does not return those options.
+
+Keep provider-specific metadata optional so the result card remains reusable across different platforms.
+
+## 6. Build Platform Landing Page Templates
+
+Prepare a reusable template for future SEO landing pages, such as:
+- /facebook-video-downloader
+- /youtube-video-downloader
+- /tiktok-video-downloader
+- /instagram-video-downloader
+- /twitter-video-downloader
+- /pinterest-video-downloader
+- /reddit-video-downloader
+
+Use the correct canonical platform terminology and URL slug for each platform.
+
+These routes should only be published as functional service pages when the relevant integration and permitted functionality are available.
+
+For planned integrations, either keep the pages unpublished or provide genuinely useful informational content without suggesting that downloads work.
+
+Each published landing page should support:
+- Unique page title.
+- Unique meta description.
+- Introductory content.
+- Supported-link instructions.
+- How-to steps.
+- Platform-specific FAQs.
+- Appropriate internal links.
+- A reusable downloader component.
+- Appropriate advertising slots.
+
+Do not generate large numbers of duplicate or thin SEO pages.
+
+## 7. Add Google AdSense Placeholder Slots
+
+I intend to apply for Google AdSense later.
+
+For now, add visually distinct DEMO AD PLACEHOLDERS to the layout in sensible locations. These must be placeholders, not real advertisements.
+
+Create a reusable AdSlot component with properties such as:
+- id
+- placement
+- format
+- responsive
+- enabled
+- label
+
+Supported placements should include:
+- Top banner, below the header.
+- In-content banner, between major homepage sections.
+- Sidebar advertisement on suitable desktop layouts.
+- A reserved area below video results.
+- A footer-adjacent placement, where appropriate.
+
+Recommended desktop formats may include:
+- Responsive display.
+- Leaderboard-style placeholder.
+- Medium rectangle-style placeholder.
+
+On mobile, use responsive full-width placeholders with appropriate spacing and no horizontal overflow.
+
+Do not show every ad slot simultaneously if doing so would overwhelm the user. Use a restrained layout with sufficient content and whitespace.
+
+### Ad Placeholder Appearance
+
+During development, display a neutral placeholder with:
+- A subtle dashed border.
+- A light-neutral background.
+- A small "Advertisement" label.
+- A small "Ad placeholder — development only" caption.
+- A simple illustrative icon if appropriate.
+
+Use realistic reserved dimensions for layout planning, but do not pretend the placeholder is an actual ad.
+
+The placeholders must not:
+- Look like Download buttons.
+- Be clickable advertisements.
+- Simulate ad clicks.
+- Contain fake advertisers or promotional claims.
+- Obstruct the main download workflow.
+- Trigger popups or redirects.
+
+Keep ad placeholder rendering controlled by a central configuration, for example:
+
+showDemoAds = true
+
+When showDemoAds is false, remove the development placeholders cleanly without leaving excessive empty gaps.
+
+Prepare the AdSlot component so a developer can later integrate the official Google AdSense code or approved ad-serving mechanism.
+
+Do not invent a publisher ID, ad slot ID, or AdSense script.
+
+Do not load real advertising scripts in development.
+
+The presence of these placeholders does not imply AdSense approval or guarantee that the intended placements are eligible for ads.
+
+## 8. Improve the Homepage Layout
+
+Arrange the homepage in this order, adjusting as necessary for the best UX:
+
+1. Header and navigation.
+2. Optional top advertisement placeholder.
+3. Hero section with the URL input.
+4. Video result area.
+5. Optional advertisement placeholder below the main tool.
+6. Supported platforms grid.
+7. How it works.
+8. Features and benefits.
+9. Platform compatibility information.
+10. Helpful guides or recent articles.
+11. FAQ section.
+12. Footer with policy and contact links.
+
+Keep the downloader tool visually dominant.
+
+Do not insert advertising placeholders between the input field and its primary action.
+
+## 9. Add a Platform Navigation Experience
+
+Update the navigation to include:
+- Home.
+- Supported Platforms.
+- How It Works.
+- Guides.
+- FAQ.
+- About.
+
+On mobile, use an accessible navigation menu.
+
+Consider adding a platform selector near the URL input, but keep automatic detection as the default.
+
+The platform selector should use the same platform registry as the platform cards and landing pages.
+
+## 10. Prepare for Future Backend Integration
+
+The design should remain independent of the extraction provider.
+
+Define clean TypeScript interfaces for:
+- Platform configuration.
+- Video metadata.
+- Video quality.
+- Video resolution result.
+- Download state.
+- Provider error.
+
+Use a provider-neutral frontend service layer.
+
+Keep mock data isolated and clearly marked as development-only.
+
+Do not hardcode successful results into the production UI.
+
+Do not implement unauthorized scraping, bypass access controls, or claim that all platforms are supported.
+
+If a real provider is not configured, show a clear message indicating that the integration is not yet available.
+
+## 11. SEO, Performance, and Accessibility
+
+Ensure:
+- Semantic HTML.
+- Responsive metadata.
+- Unique titles and descriptions for published pages.
+- Correct canonical URL configuration.
+- A maintainable sitemap strategy.
+- Useful internal links.
+- Accessible form labels.
+- Keyboard navigation.
+- Visible focus indicators.
+- Sufficient contrast.
+- Reduced-motion support.
+- Optimized images.
+- Minimal unnecessary JavaScript.
+- Good mobile performance.
+
+Use real, useful content rather than automatically creating hundreds of thin platform pages.
+
+## 12. Legal and Trust Pages
+
+Preserve or add reusable routes for:
+- About.
+- Contact.
+- Privacy Policy.
+- Terms of Service.
+- Copyright / Takedown Policy.
+- FAQ.
+
+Clearly mark any legal text requiring review or customization.
+
+Do not invent business details.
+
+Include an appropriate disclaimer that the website is independent and not affiliated with or endorsed by the platforms it references.
+
+## 13. Code Quality
+
+Use the existing framework and conventions wherever practical.
+
+Prefer reusable components and centralized configuration.
+
+Avoid unnecessary dependencies.
+
+Keep the following concerns separate:
+- UI components.
+- Platform registry.
+- URL detection.
+- API client.
+- Video result rendering.
+- Advertisement slots.
+- SEO metadata.
+- Content pages.
+
+Do not rewrite working code without a clear reason.
+
+## 14. Final Deliverable
+
+Modify the existing project and ensure that it runs correctly.
+
+After implementation:
+- Check desktop and mobile layouts.
+- Check the platform selector and URL detection.
+- Check platform availability states.
+- Check ad placeholder visibility configuration.
+- Check that demo ads are clearly labeled.
+- Check that no placeholder advertises a fake product.
+- Check that mock video results are clearly identified.
+- Check for build and runtime errors.
+
+Provide a concise summary of the files changed, the new reusable components, how to add a platform in the future, how to toggle demo ad placeholders, and any remaining backend requirements.
+
+The final result should feel like a professional, scalable, multi-platform video utility website, not a collection of unrelated downloader pages.
