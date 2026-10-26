@@ -3,11 +3,11 @@ import { ArrowRight, CircleAlert, Mail, ShieldCheck } from 'lucide-react';
 
 const questions = [
   ['How do I use the downloader?', 'Copy a video or Reel link, paste it into the link field, and check the format. The current interface is a demo, so it does not look up videos or download files.'],
-  ['Why is a video link not working?', 'Make sure the complete address starts with https:// or http:// and uses a recognized facebook.com or fb.watch format. A valid format does not guarantee that a source is accessible.'],
+  ['Why is a video link not working?', 'Make sure the complete address starts with https:// or http:// and uses a format in the platform directory. A valid format does not guarantee that a source is accessible.'],
   ['Why are some quality options unavailable?', 'Quality choices depend on what an authorized source actually provides. The options shown in this demonstration are sample data only.'],
   ['Where are downloaded files saved?', 'This demo does not create files. If a real service is added later, saving behavior will depend on your browser and device.'],
   ['Is ReelFetch connected to a video service?', 'No. The current site is a front-end demonstration. It does not send links to a server, retrieve video information, or provide downloads.'],
-  ['Which links are supported?', 'The interface recognizes URL formats on facebook.com and fb.watch. This is only a format check and does not guarantee access, compatibility, or an available source.'],
+  ['Which links are recognized?', 'The interface recognizes URL formats from Facebook, YouTube, TikTok, Instagram, X, Pinterest, and Reddit. This is a local format check only; it does not guarantee access, compatibility, or an available source.'],
   ['Does the demo preview show my video?', 'No. Preview details are illustrative sample data, separate from your link. The sample thumbnail is abstract artwork and there is no sample file to download.'],
   ['Can I use ReelFetch on a phone?', 'The interface is responsive and designed for modern Android and iPhone browsers as well as tablets and desktop browsers. Saving behavior, if a future authorized service is added, would depend on your browser and device.'],
   ['Will a video automatically save to my gallery?', 'No automatic gallery saving is promised. This demo does not create or transfer files. Device and browser behavior varies.'],
@@ -15,7 +15,7 @@ const questions = [
   ['Can I download any video I find?', 'Only use content you own or have permission to save. Rights, platform terms, and local laws may apply. You are responsible for confirming your authorization.'],
   ['Is every Facebook video downloadable?', 'No. Availability depends on the source, access permissions, rights, and whether an authorized downloadable source exists.'],
   ['Is ReelFetch part of Meta or Facebook?', 'No. ReelFetch is an independent concept and is not affiliated with, endorsed by, or sponsored by Meta or Facebook.'],
-  ['What should I do if my link is not recognized?', 'Check that you copied the full web address and that it begins with https:// or http://. The current format checker recognizes facebook.com and fb.watch only.'],
+  ['What should I do if my link is not recognized?', 'Check that you copied the full web address and that it begins with https:// or http://. The current format checker recognizes the domains listed on the platform directory.'],
 ];
 
 function PageHero({ eyebrow, title, intro }: { eyebrow: string; title: string; intro: string }) {
@@ -27,7 +27,7 @@ function DraftNotice() {
 }
 
 export function AboutPage() {
-  return <><PageHero eyebrow="About ReelFetch" title="A link tool should be clear about the link." intro="ReelFetch is a consumer utility concept for presenting video-link options in a careful, understandable way. The interface is designed around clarity, user choice, and permission." /><div className="rf-container rf-prose"><h2>What this is today</h2><p>This site is a front-end demo. It can recognize a small set of URL formats in your browser and show an explicitly illustrative result card. It does not contact a service, check a video, or download files.</p><h2>What we value</h2><p>Useful tools should not overstate what they can do. ReelFetch aims to make each step understandable, label example content, and remind people to use only material they have the right to save.</p><h2>Independent by design</h2><p>ReelFetch is not affiliated with, endorsed by, or sponsored by Meta or Facebook. Names are used only to describe the link formats this interface is designed to recognize.</p><Link href="/" className="rf-button rf-button-secondary" style={{ marginTop: 14 }} data-testid="link-about-home">Try the illustrative demo <ArrowRight size={15} /></Link></div></>;
+  return <><PageHero eyebrow="About ReelFetch" title="A link tool should be clear about the link." intro="ReelFetch is a consumer utility concept for presenting video-link options in a careful, understandable way. The interface is designed around clarity, user choice, and permission." /><div className="rf-container rf-prose"><h2>What this is today</h2><p>This site is a front-end demo. It can recognize URL formats from Facebook, YouTube, TikTok, Instagram, X, Pinterest, and Reddit in your browser, and show an explicitly illustrative Facebook result card. It does not contact a service, check a video, or download files.</p><h2>What we value</h2><p>Useful tools should not overstate what they can do. ReelFetch aims to make each step understandable, label example content, and remind people to use only material they have the right to save.</p><h2>Independent by design</h2><p>ReelFetch is not affiliated with, endorsed by, or sponsored by Meta or Facebook. Names are used only to describe the link formats this interface is designed to recognize.</p><Link href="/" className="rf-button rf-button-secondary" style={{ marginTop: 14 }} data-testid="link-about-home">Try the illustrative demo <ArrowRight size={15} /></Link></div></>;
 }
 
 export function ContactPage() {

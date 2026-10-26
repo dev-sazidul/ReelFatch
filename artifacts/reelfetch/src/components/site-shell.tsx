@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from 'react';
 import { Link, useLocation } from 'wouter';
 import { ArrowDownToLine, Menu, X } from 'lucide-react';
+import { AdPlaceholder } from '@/components/ad-placeholder';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -30,15 +31,17 @@ export function SiteShell({ children }: { children: ReactNode }) {
             <span className="rf-brand-mark"><ArrowDownToLine size={18} strokeWidth={2.6} /></span>
             <span>ReelFetch</span>
           </Link>
-          <button className="rf-mobile-menu" type="button" aria-expanded={menuOpen} aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'} onClick={() => setMenuOpen(!menuOpen)} data-testid="button-mobile-menu">
+          <button className="rf-mobile-menu" type="button" aria-expanded={menuOpen} aria-controls="primary-navigation" aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'} onClick={() => setMenuOpen(!menuOpen)} data-testid="button-mobile-menu">
             {menuOpen ? <X size={19} /> : <Menu size={19} />}
           </button>
-          <nav className={`rf-nav${menuOpen ? ' mobile-open' : ''}`} aria-label="Main navigation">
+          <nav id="primary-navigation" className={`rf-nav${menuOpen ? ' mobile-open' : ''}`} aria-label="Main navigation">
             {navLinks.map((item) => <Link key={item.href} href={item.href} aria-current={location === item.href ? 'page' : undefined} onClick={() => setMenuOpen(false)} data-testid={`link-nav-${item.label.toLowerCase()}`}>{item.label}</Link>)}
             <Link href="/#tool" className="rf-nav-cta" onClick={() => setMenuOpen(false)} data-testid="link-nav-start">Try the tool</Link>
           </nav>
         </div>
       </header>
+      <AdPlaceholder placement="belowHeader" />
+      <AdPlaceholder placement="desktopSidebar" />
       <main className="rf-main">{children}</main>
       <footer className="rf-footer">
         <div className="rf-container">

@@ -3,20 +3,13 @@ import { Link } from 'wouter';
 import { ArrowRight, Check, CircleAlert, Clipboard, FileCheck2, Laptop, LoaderCircle, LockKeyhole, Play, Smartphone, Tablet, WandSparkles } from 'lucide-react';
 import { DemoResult, DemoDisclaimer } from '@/components/demo-result';
 import { demoStatusChoices, type DemoStatusId } from '@/data/demo';
+import { detectPlatformUrl, getPlatformStatus, platformRegistry } from '@/data/platforms';
+import { AdPlaceholder } from '@/components/ad-placeholder';
+import { DetectedPlatform, PlatformGrid } from '@/components/platform-list';
+import { VideoResultCard } from '@/components/video-result-card';
+import { getAuthorizedVideoProvider, type AuthorizedVideoProvider, type AuthorizedVideoResult } from '@/services/platform-integrations';
 
 type UiState = { kind: 'idle' | 'error' | 'info' | 'warning' | 'loading'; text: string };
-const supportedHosts = ['facebook.com', 'fb.watch'];
-
-function validateUrl(raw: string): { valid: boolean; supported: boolean } {
-  try {
-    const url = new URL(raw.trim());
-    const host = url.hostname.toLowerCase().replace(/^www\./, '');
-    const validProtocol = url.protocol === 'https:' || url.protocol === 'http:';
-    return { valid: validProtocol, supported: validProtocol && supportedHosts.some((domain) => host === domain || host.endsWith(`.${domain}`)) };
-  } catch {
-    return { valid: false, supported: false };
-  }
-}
 
 const features = [
   { icon: LockKeyhole, title: 'Privacy-conscious by design', text: 'No sign-in is needed in this demo, and no link is sent to a lookup service.' },
@@ -29,7 +22,7 @@ const features = [
 
 const faqItems = [
   { q: 'How do I use the downloader?', a: 'Copy a Facebook Reel or video link, paste it above, and check its format. The current demo does not look up videos or download files.' },
-  { q: 'Why is a video link not working?', a: 'Check that the full URL begins with https:// or http:// and uses facebook.com or fb.watch. A recognized format does not guarantee that a video can be accessed.' },
+  { q: 'Why is a video link not working?', a: 'Check that the full URL begins with https:// or http:// and uses a platform format listed below. A recognized format does not guarantee that a video can be accessed.' },
   { q: 'Why are some quality options unavailable?', a: 'Options depend on the actual source. The qualities shown in the demo are illustrative sample data and are not available for download.' },
   { q: 'Where are downloaded files saved?', a: 'This demo does not create files. In a future connected service, saving behavior would depend on your browser and device.' },
   { q: 'Can I use ReelFetch on a phone or tablet?', a: 'The interface is designed to adapt to Android and iPhone browsers, tablets, laptops, and desktop screens. Saving or playback behavior depends on your device and browser.' },
@@ -46,6 +39,16 @@ export default function HomePage() {
   const [state, setState] = useState<UiState>({ kind: 'idle', text: '' });
   const [demoVisible, setDemoVisible] = useState(false);
   const [quality, setQuality] = useState('720');
+  const [realResult, setRealResult] = useState<AuthorizedVideoResult | null>(null);
+  const [realProvider, setRealProvider] = useState<AuthorizedVideoProvider | null>(null);
+  const detection = detectPlatformUrl(url);
+  const isAnyPlatformAvailable = platformRegistry.some(({ id }) => getPlatformStatus(id) === 'Available');
+
+  const clearResults = () => {
+    setDemoVisible(false);
+    setRealResult(null);
+    setRealProvider(null);
+  };
 
   const handlePaste = async () => {
     if (!navigator.clipboard?.readText) {
@@ -60,6 +63,7 @@ export default function HomePage() {
         return;
       }
       setUrl(text.trim());
+      clearResults();
       setState({ kind: 'info', text: 'Link pasted. Check the URL before continuing.' });
       document.getElementById('reel-url')?.focus();
     } catch {
@@ -68,40 +72,63 @@ export default function HomePage() {
     }
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const result = validateUrl(url);
-    if (!url.trim() || !result.valid) {
+    if (detection.kind === 'empty' || detection.kind === 'invalid') {
       setState({ kind: 'error', text: 'Enter a complete web address beginning with https:// or http://.' });
-      setDemoVisible(false);
+      clearResults();
       return;
     }
-    if (!result.supported) {
-      setState({ kind: 'error', text: 'That address is formatted correctly, but this interface only recognizes facebook.com and fb.watch links.' });
-      setDemoVisible(false);
+    if (detection.kind === 'unsupported') {
+      setState({ kind: 'error', text: 'That URL format is not recognized yet. Check the link or choose a platform in the directory below.' });
+      clearResults();
       return;
     }
-    setState({ kind: 'info', text: 'Link format recognized. No lookup was made: a ReelFetch service is not connected yet.' });
-    setDemoVisible(false);
+    clearResults();
+    const platform = detection.platform;
+    const status = getPlatformStatus(platform.id);
+    const provider = getAuthorizedVideoProvider(platform.id);
+    if (status !== 'Available' || !provider) {
+      setState({ kind: 'info', text: `${platform.name} link format detected. Its video service is not connected, so no lookup or quality check was made.` });
+      return;
+    }
+
+    setState({ kind: 'loading', text: `Checking this ${platform.name} link with the connected authorized service…` });
+    try {
+      const result = await provider.lookup(url.trim());
+      setRealProvider(provider);
+      setRealResult(result);
+      setState(result.qualities.some((item) => item.available)
+        ? { kind: 'info', text: 'Video details were returned by the connected authorized service.' }
+        : { kind: 'warning', text: 'The service did not return any available downloadable quality options for this video.' });
+    } catch {
+      setState({ kind: 'error', text: 'We couldn’t check this link right now. Please verify the address and try again.' });
+    }
   };
 
   const runDemo = () => {
-    const result = validateUrl(url);
-    if (!url.trim()) {
+    if (detection.kind === 'empty') {
       setState({ kind: 'error', text: 'Add a link first so the demo can show where a preview would appear.' });
       return;
     }
-    if (!result.valid) {
+    if (detection.kind === 'invalid') {
       setState({ kind: 'error', text: 'Invalid URL format. Enter a complete web address to continue.' });
-      setDemoVisible(false);
+      clearResults();
       return;
     }
-    if (!result.supported) {
-      setState({ kind: 'error', text: 'Unsupported URL. The demo recognizes facebook.com and fb.watch domains only.' });
-      setDemoVisible(false);
+    if (detection.kind === 'unsupported') {
+      setState({ kind: 'error', text: 'Unsupported URL. Try a link from one of the platforms in the directory.' });
+      clearResults();
+      return;
+    }
+    if (detection.platform.id !== 'facebook') {
+      setState({ kind: 'info', text: 'Platform detected. The illustrative result is Facebook-only; no sample video data is provided for this platform.' });
+      clearResults();
       return;
     }
     setState({ kind: 'info', text: 'Illustrative preview shown below. These details are sample data, not a result for your link.' });
+    setRealResult(null);
+    setRealProvider(null);
     setDemoVisible(true);
   };
 
@@ -109,13 +136,15 @@ export default function HomePage() {
     const message: Record<DemoStatusId, UiState> = {
       loading: { kind: 'loading', text: 'Loading (demo state). No request is running; this state is shown for interface preview only.' },
       invalid: { kind: 'error', text: 'Invalid URL. Check for a complete web address, including https://.' },
-      unsupported: { kind: 'error', text: 'Unsupported URL. Try a facebook.com or fb.watch address.' },
+      unsupported: { kind: 'error', text: 'Unsupported URL. Try a URL from one of the platforms in the directory.' },
       'empty-source': { kind: 'warning', text: 'No downloadable source is available in this demonstration. You can try another link when a service is connected.' },
       'quality-unavailable': { kind: 'warning', text: 'The selected quality is unavailable in this sample. Choose one of the available illustrative options.' },
       'network-error': { kind: 'error', text: 'Network error (demo state). No request was sent. Check your connection or try again later when a service is available.' },
       starting: { kind: 'warning', text: 'Download starting is a demo-only state. No file is being created or transferred.' },
       failed: { kind: 'error', text: 'Download failed (demo state). No download was attempted. Retry is unavailable until a real service is connected.' },
     };
+    setRealResult(null);
+    setRealProvider(null);
     setState(message[status]);
   };
 
@@ -127,22 +156,23 @@ export default function HomePage() {
         <div className="rf-container rf-hero-inner">
           <span className="rf-eyebrow">A clearer way to handle a link</span>
           <h1>Bring a link.<br /><em>Know what’s next.</em></h1>
-          <p className="rf-lead">Paste a Facebook Reel or video share link to see how ReelFetch is designed to guide you. Straightforward steps, clear choices, and no guesswork.</p>
+          <p className="rf-lead">Paste a video link from a listed platform to see how ReelFetch identifies its URL format. Straightforward guidance, clear status, and no guesswork.</p>
           <form className="rf-tool-card" onSubmit={handleSubmit} noValidate>
             <label className="rf-url-label" htmlFor="reel-url">Video link</label>
             <div className="rf-input-wrap">
-              <input id="reel-url" className="rf-url-input" type="url" inputMode="url" autoComplete="url" placeholder="https://www.facebook.com/…" value={url} onChange={(event) => { setUrl(event.target.value); if (state.kind !== 'idle') setState({ kind: 'idle', text: '' }); }} aria-describedby="url-hint" data-testid="input-video-url" />
-              {url && <button type="button" className="rf-button rf-button-quiet" onClick={() => { setUrl(''); setState({ kind: 'idle', text: '' }); setDemoVisible(false); }} aria-label="Clear video link" data-testid="button-clear-url">Clear</button>}
+              <input id="reel-url" className="rf-url-input" type="url" inputMode="url" autoComplete="url" placeholder="Paste a video link here" value={url} onChange={(event) => { setUrl(event.target.value); if (state.kind !== 'idle') setState({ kind: 'idle', text: '' }); clearResults(); }} aria-describedby="url-hint" data-testid="input-video-url" />
+              {url && <button type="button" className="rf-button rf-button-quiet" onClick={() => { setUrl(''); setState({ kind: 'idle', text: '' }); clearResults(); }} aria-label="Clear video link" data-testid="button-clear-url">Clear</button>}
               <button type="button" className="rf-button rf-button-secondary rf-paste" onClick={handlePaste} data-testid="button-paste-url"><Clipboard size={15} /> Paste</button>
-              <button type="submit" className="rf-button rf-button-primary" data-testid="button-check-url">Find video <ArrowRight size={15} /></button>
+              <button type="submit" className="rf-button rf-button-primary" disabled={state.kind === 'loading'} data-testid="button-check-url">{state.kind === 'loading' ? 'Checking…' : 'Find video'} <ArrowRight size={15} /></button>
             </div>
             <div className="rf-helper-row" id="url-hint">
-              <span><CircleAlert size={13} /> Supports facebook.com and fb.watch link formats</span>
+              <span><CircleAlert size={13} /> Recognizes listed platform URL formats; detection does not mean downloads are available</span>
               <span><LockKeyhole size={13} /> No sign-in required</span>
             </div>
+            {detection.kind === 'recognized' && <DetectedPlatform name={detection.platform.name} Icon={detection.platform.Icon} status={getPlatformStatus(detection.platform.id)} />}
             <StatusMessage state={state} />
             <div className="rf-form-actions">
-              <button type="button" className="rf-button rf-button-secondary" onClick={runDemo} data-testid="button-show-demo"><Play size={14} /> Show illustrative preview</button>
+              <button type="button" className="rf-button rf-button-secondary" onClick={runDemo} data-testid="button-show-demo"><Play size={14} /> Show Facebook demo preview</button>
               <span style={{ alignSelf: 'center', color: 'hsl(216 13% 49%)', fontSize: 11 }}>Explicitly labeled demo; no link lookup.</span>
             </div>
             <div style={{ marginTop: 13, borderTop: '1px solid hsl(216 24% 92%)', paddingTop: 12 }}>
@@ -153,21 +183,26 @@ export default function HomePage() {
               </select>
             </div>
           </form>
-          <DemoDisclaimer />
-          <div className="rf-trust"><span><LockKeyhole size={13} /> Your link stays in this demo</span><span><Check size={13} /> No account needed</span><span><FileCheck2 size={13} /> Permission matters</span></div>
+          <DemoDisclaimer anyPlatformAvailable={isAnyPlatformAvailable} />
+          <div className="rf-trust"><span><LockKeyhole size={13} /> {isAnyPlatformAvailable ? 'Service handling varies by platform' : 'No link is sent to a service'}</span><span><Check size={13} /> No account needed</span><span><FileCheck2 size={13} /> Permission matters</span></div>
           {demoVisible && <DemoResult selectedQuality={quality} onQualityChange={(nextQuality) => {
             setQuality(nextQuality);
             if (nextQuality === '1080') setState({ kind: 'warning', text: 'Selected quality unavailable (demo). Choose an available illustrative option.' });
           }} onDemoDownload={handleDemoDownload} />}
-          {!demoVisible && <div style={{ maxWidth: 710, margin: '24px auto 0', color: 'hsl(216 13% 53%)', fontSize: 12 }} data-testid="text-empty-state">A preview will appear here only when you choose <strong>Show illustrative preview</strong>.</div>}
+          {realResult && realProvider && <VideoResultCard result={realResult} provider={realProvider} />}
+          {(demoVisible || realResult) && <AdPlaceholder placement="belowVideoResults" />}
+          {!demoVisible && !realResult && <div style={{ maxWidth: 710, margin: '24px auto 0', color: 'hsl(216 13% 53%)', fontSize: 12 }} data-testid="text-empty-state">No video lookup runs until an authorized platform service is available. The Facebook sample preview is separate from any real link.</div>}
         </div>
       </section>
+
+      <AdPlaceholder placement="betweenSections" />
+      <PlatformGrid />
 
       <section className="rf-section" id="how-it-works">
         <div className="rf-container">
           <div className="rf-section-heading"><span className="rf-eyebrow">Three simple steps</span><h2>Clear from the first paste.</h2><p>The intended experience is uncomplicated. At present, this interface demonstrates the flow without processing a real link.</p></div>
           <div className="rf-steps">
-            {[['01', 'Add a link', 'Paste a Facebook video URL. We’ll explain whether its format is recognized.'], ['02', 'Review the details', 'When a service is connected, available source details and choices can be presented clearly.'], ['03', 'Choose what works', 'Select an authorized option if one is available. Nothing here claims a file is ready today.']].map(([number, title, body]) => <article className="rf-step" key={number}><span className="rf-step-number">{number} / STEP</span><h3>{title}</h3><p>{body}</p></article>)}
+            {[['01', 'Add a link', 'Paste a link from a listed platform. ReelFetch identifies the URL format in your browser.'], ['02', 'Review the details', 'When an authorized service is connected, only details and options it returns can be shown.'], ['03', 'Choose what works', 'Select an available option if the connected source provides one.']].map(([number, title, body]) => <article className="rf-step" key={number}><span className="rf-step-number">{number} / STEP</span><h3>{title}</h3><p>{body}</p></article>)}
           </div>
         </div>
       </section>

@@ -5,7 +5,9 @@ import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import HomePage from '@/pages/home';
 import { AboutPage, ContactPage, CopyrightPage, FaqPage, NotFoundPage, PrivacyPage, TermsPage } from '@/pages/info-pages';
+import PlatformPage from '@/pages/platform-page';
 import { SiteShell } from '@/components/site-shell';
+import { applyPageMetadata, getPageMetadata } from '@/lib/seo';
 import {
   Route,
   Switch,
@@ -17,18 +19,11 @@ const queryClient = new QueryClient();
 
 function Router() {
   const [location] = useLocation();
+  const pathname = location.split(/[?#]/, 1)[0] || '/';
+  const pageMetadata = getPageMetadata(pathname);
   useEffect(() => {
-    const titles: Record<string, string> = {
-      '/': 'ReelFetch — Clear choices for a video link',
-      '/about': 'About ReelFetch',
-      '/contact': 'Contact ReelFetch',
-      '/privacy': 'Privacy — ReelFetch',
-      '/terms': 'Terms — ReelFetch',
-      '/copyright': 'Copyright / Takedown — ReelFetch',
-      '/faq': 'FAQ — ReelFetch',
-    };
-    document.title = titles[location] ?? 'Page not found — ReelFetch';
-  }, [location]);
+    applyPageMetadata(pathname, pageMetadata);
+  }, [pathname, pageMetadata.title, pageMetadata.description, pageMetadata.robots]);
   return (
     // Keep a shared shell (sidebar, navbar) outside the boundary so it
     // survives a page crash.
@@ -42,6 +37,7 @@ function Router() {
           <Route path="/terms" component={TermsPage} />
           <Route path="/copyright" component={CopyrightPage} />
           <Route path="/faq" component={FaqPage} />
+          <Route path="/platform/:slug" component={PlatformPage} />
           <Route component={NotFoundPage} />
         </Switch>
       </SiteShell>

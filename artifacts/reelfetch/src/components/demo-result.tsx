@@ -37,6 +37,15 @@ export function DemoResult({ selectedQuality, onQualityChange, onDemoDownload }:
   );
 }
 
-export function DemoDisclaimer() {
-  return <div className="rf-disclosure"><Sparkles size={16} style={{ flex: '0 0 auto', marginTop: 1 }} /><span><strong>Demo mode — no backend is connected.</strong> ReelFetch does not check this link, retrieve video details, or provide downloads yet. The preview below uses separate illustrative sample data.</span></div>;
+export function DemoDisclaimer({ anyPlatformAvailable = false }: { anyPlatformAvailable?: boolean }) {
+  return (
+    <div className="rf-disclosure">
+      <Sparkles size={16} style={{ flex: '0 0 auto', marginTop: 1 }} />
+      <span>
+        {anyPlatformAvailable
+          ? <><strong>Platform availability varies.</strong> Only platforms marked Available use a connected authorized service. The Facebook preview below remains illustrative sample data.</>
+          : <><strong>Demo mode — no backend is connected.</strong> ReelFetch does not check links, retrieve video details, or provide downloads yet. The preview below uses separate illustrative sample data.</>}
+      </span>
+    </div>
+  );
 }
