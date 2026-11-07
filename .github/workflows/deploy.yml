@@ -1,0 +1,137 @@
+# Builds ReelFetch Docker images (backend + frontend) and deploys over SSH to VPS.
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  deploy:
+    name: Build & Deploy to VPS
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    concurrency:
+      group: production-reelfetch
+      cancel-in-progress: false
+    env:
+      DEPLOY_PATH: ${{ vars.DEPLOY_PATH || '/var/www/reelfetch' }}
+      BACKEND_IMAGE: reelfetch-backend
+      FRONTEND_IMAGE: reelfetch-frontend
+    steps:
+      - name: Check deploy settings
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          VPS_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+        run: |
+          missing=0
+          for name in VPS_HOST VPS_USER VPS_SSH_KEY VPS_KNOWN_HOSTS; do
+            if [ -z "${!name}" ]; then
+              echo "::error::$name secret is not set."
+              missing=1
+            fi
+          done
+          exit "$missing"
+
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build backend image
+        uses: docker/build-push-action@v5
+        with:
+          context: backend
+          load: true
+          provenance: false
+          tags: ${{ env.BACKEND_IMAGE }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: frontend
+          load: true
+          provenance: false
+          tags: ${{ env.FRONTEND_IMAGE }}:${{ github.sha }}
+          build-args: |
+            API_PROXY_TARGET=http://backend:3000
+            NEXT_PUBLIC_SITE_URL=${{ vars.SITE_URL || '' }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Set up SSH
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_PORT: ${{ secrets.VPS_PORT || '22' }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          VPS_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+        run: |
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" | tr -d '\r' > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$VPS_KNOWN_HOSTS" | tr -d '\r' > ~/.ssh/known_hosts
+          cat > ~/.ssh/config <<EOF
+          Host vps
+            HostName $VPS_HOST
+            User $VPS_USER
+            Port $VPS_PORT
+            IdentityFile ~/.ssh/deploy_key
+            IdentitiesOnly yes
+            StrictHostKeyChecking yes
+            ServerAliveInterval 30
+          EOF
+          ssh vps true
+
+      - name: Copy compose and images to VPS
+        run: |
+          ssh vps "mkdir -p $(printf '%q' "$DEPLOY_PATH")"
+          scp compose.yaml "vps:$DEPLOY_PATH/compose.yaml"
+          echo "Sending backend image..."
+          docker save "$BACKEND_IMAGE:$GITHUB_SHA" | gzip | ssh vps 'gunzip | docker load'
+          echo "Sending frontend image..."
+          docker save "$FRONTEND_IMAGE:$GITHUB_SHA" | gzip | ssh vps 'gunzip | docker load'
+
+      - name: Start ReelFetch release
+        run: |
+          ssh vps "bash -s -- $(printf '%q ' "$DEPLOY_PATH" "$BACKEND_IMAGE" "$FRONTEND_IMAGE" "$GITHUB_SHA")" <<'EOF'
+          set -euo pipefail
+          deploy_path=$1 backend_image=$2 frontend_image=$3 release=$4
+          cd "$deploy_path"
+
+          # Tag incoming images as latest
+          docker tag "$backend_image:$release" "$backend_image:latest"
+          docker tag "$frontend_image:$release" "$frontend_image:latest"
+          docker image rm "$backend_image:$release" "$frontend_image:$release" >/dev/null 2>&1 || true
+
+          # Start services
+          docker compose up -d --remove-orphans
+
+          echo "Waiting for services to become healthy..."
+          timeout=180
+          elapsed=0
+          while [ $elapsed -lt $timeout ]; do
+            if docker compose ps frontend | grep -q "Up"; then
+              echo "ReelFetch is up and running!"
+              docker image prune -f >/dev/null 2>&1 || true
+              exit 0
+            fi
+            sleep 5
+            elapsed=$((elapsed + 5))
+          done
+
+          echo "::error::ReelFetch did not start within $timeout seconds. Logs:"
+          docker compose logs --tail 50
+          exit 1
+          EOF
+

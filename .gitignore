@@ -1,1 +1,18 @@
+# Dependencies
 node_modules
+
+# Next.js build output and generated types
+.next
+out
+next-env.d.ts
+*.tsbuildinfo
+
+# Secrets: never commit real environment files (backend/.env holds the Facebook token)
+!.env.example
+
+# Python
+backend/.venv
+__pycache__/
+*.py[cod]
+.pytest_cache/
+config.bat

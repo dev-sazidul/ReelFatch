@@ -1,58 +1,65 @@
 # Development guide
 
-Use two terminals. Node.js 22 or newer is expected.
+Use two terminals with Node.js 22+ and Python 3.11+. Verification used Node.js 24 and Python 3.14 on Windows.
+
+Alternatively, run the production stack with `docker compose up --build -d` from the repository root and open http://localhost:8080. See [the Docker guide](DOCKER.md) for container settings. Local development commands below continue to work without Docker.
 
 ## Frontend
 
 From the repository root:
 
-```bash
+```powershell
+cd frontend
 npm install
 npm run dev
 ```
 
-Open http://localhost:5173/. Production build:
+Open http://localhost:5173/. For production, from `frontend/`:
 
-```bash
+```powershell
+npm run typecheck
 npm run build
+npm start
 ```
 
-`npm run build` typechecks, writes `public/sitemap.xml` and `public/robots.txt`, then builds the Vite app. A warning about `VITE_PUBLIC_SITE_URL` is expected when that variable is unset.
+Production serves http://localhost:4173/. Next.js needs a Node server for API forwarding and dynamic pages; `.next/` is not a static hosting directory. The build generates the sitemap and robots file, then builds and typechecks the application.
 
-Copy `.env.example` to `.env` only if the API is not on `http://127.0.0.1:3000`. `VITE_API_BASE_URL` empty means the browser calls this same origin and Vite proxies the API.
+Copy `frontend/.env.example` to `frontend/.env.local` to customize the frontend. All frontend environment files belong in `frontend/`. Shell variables take precedence, followed by Next.js's mode-specific local file, `.env.local`, mode-specific file, and `.env`. The SEO generator loads the same production environment files as the build.
+
+- Leave `NEXT_PUBLIC_API_BASE_URL` empty for same-origin API requests.
+- `API_PROXY_TARGET` defaults to `http://127.0.0.1:3000`; it is server-only.
+- Set `NEXT_PUBLIC_SITE_URL` to the public HTTPS origin before building for deployment. Without it, the sitemap is empty and canonical URLs use the incoming host with a local HTTP fallback.
+- Public environment values are embedded at build time. Rebuild after changing them or the proxy target. Restart development after configuration changes.
+
+Migration mapping: `VITE_API_BASE_URL` → `NEXT_PUBLIC_API_BASE_URL`, `VITE_DEV_API_PROXY` → `API_PROXY_TARGET`, `VITE_PUBLIC_SITE_URL` → `NEXT_PUBLIC_SITE_URL`.
 
 ## Backend
 
-```bash
+Windows PowerShell, in a second terminal starting at the repository root:
+
+```powershell
 cd backend
-npm install
-cp .env.example .env
-npm test
-npm run build
-npm run start:dev
+python -m venv .venv
+.venv/Scripts/python -m pip install -r requirements-dev.txt
+Copy-Item .env.example .env # first setup only; preserve an existing .env
+.venv/Scripts/python -m pytest -q
+.venv/Scripts/python -m app --reload
 ```
 
-The API listens on http://127.0.0.1:3000. Check http://127.0.0.1:3000/api/health.
+On macOS/Linux, use `.venv/bin/python` and `cp`. For production, install `requirements.txt` and run `python -m app` from `backend/` without reload. No TypeScript backend build remains.
 
-`npm test` covers URL validation, Facebook link classification, provider selection, Graph error mapping, and the rule that a missing token does not call Facebook.
+The API binds to http://127.0.0.1:3000. `GET /api/health` reports configuration without tokens. Startup reads `backend/.env`; shell variables take precedence. Keep credentials in the backend environment, never in public frontend variables.
 
-`npm run build` compiles to `backend/dist`. `npm start` runs the compiled server.
+Use one API worker. Lookups, jobs, and rate limits are in memory and disappear on restart. The limiter uses the socket peer; through Next.js, visitors share the proxy's per-route limit. Forwarded client headers are ignored. Multiple workers or per-client limits behind a proxy require shared state and an explicit trusted proxy policy.
 
-## Facebook token
+## Authorized Facebook lookup
 
-1. Create a Meta app at https://developers.facebook.com/apps/.
-2. Request the permissions the video owner can grant. `user_videos` is required for videos that person uploaded or was tagged in. A Page token is required for videos that Page owns, and the caller must be allowed to read the Page.
-3. Put the token in `FACEBOOK_PAGE_ACCESS_TOKEN` or `FACEBOOK_USER_ACCESS_TOKEN`.
-4. Restart the API. Do not commit `.env`.
+Set only `FACEBOOK_PAGE_ACCESS_TOKEN` or `FACEBOOK_USER_ACCESS_TOKEN` for a video the token may read. A Page token takes precedence. Restart the API after changing configuration. Never commit environment files.
 
-Numeric watch, Reel, and `/videos/{id}` links are read directly. A share or `fb.watch` link is followed with a public `HEAD` redirect, without cookies. A download is offered only when the media provider returns a file URL. A redirect that does not contain a numeric id returns `LINK_ID_UNAVAILABLE`. A login page returns `LOGIN_REQUIRED`.
+Numeric watch, Reel, and videos links are read directly. Share and fb.watch links may resolve through public HTTPS HEAD redirects without cookies or body parsing. Missing ids produce `LINK_ID_UNAVAILABLE`; login redirects produce `LOGIN_REQUIRED`. Missing credentials prevent Graph calls, although public redirect checks can still run.
+
+Downloads require a Graph-provided source on an allowed Facebook CDN. Fixture tests do not prove that a real token can download a particular video.
 
 ## Adding a provider
 
-1. Add a class that implements `VideoProvider`.
-2. Register it in the providers passed to `selectProvider`.
-3. Implement lookup with an authorized API only. Return `PROVIDER_NOT_CONFIGURED` until credentials exist.
-4. Add unit tests for host selection and the unconfigured error.
-5. Document the credential and the API limitation in `docs/PROJECT_OVERVIEW.md`.
-
-To move downloads onto Redis later, replace `DownloadJobStore` with a BullMQ adapter that preserves the job id and status fields. Do not add that package until a worker is actually used.
+Implement `VideoProvider` in `backend/app/providers/base.py`, register it through `backend/app/videos/service.py`, and use an authorized API only. Keep providers unconfigured until their integration exists. Add tests for host selection and credential/provider failures. Add shared persistence only when deployment requires it.
