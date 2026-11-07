@@ -1,0 +1,31 @@
+name: reelfetch
+
+services:
+  backend:
+    image: reelfetch-backend:latest
+    build:
+      context: ./backend
+    env_file:
+      - path: ./backend/.env
+        required: false
+    environment:
+      # Override local loopback settings so the frontend container can reach the API.
+      HOST: 0.0.0.0
+      PORT: "3000"
+    init: true
+    restart: unless-stopped
+
+  frontend:
+    image: reelfetch-frontend:latest
+    build:
+      context: ./frontend
+      args:
+        API_PROXY_TARGET: http://backend:3000
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-}
+    ports:
+      - "${FRONTEND_BIND_ADDRESS:-127.0.0.1}:${FRONTEND_PORT:-8082}:4173"
+    depends_on:
+      backend:
+        condition: service_healthy
+    init: true
+    restart: unless-stopped

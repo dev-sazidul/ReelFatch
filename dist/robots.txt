@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-# Set VITE_PUBLIC_SITE_URL before publishing to add the absolute sitemap URL.
