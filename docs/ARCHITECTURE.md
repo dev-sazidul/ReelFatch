@@ -1,47 +1,39 @@
 # Architecture
 
 ```text
-Browser (Vite, port 5173)
-  Find Video
-    -> POST /api/videos/lookup
-Vite proxy
-    -> NestJS API (port 3000)
-         VideosController
-           VideosService
-             ProviderRegistry
-               FacebookVideoProvider -> graph.facebook.com
-               YouTube / TikTok / Instagram providers (not configured)
-             LookupStore (memory, TTL)
-             DownloadJobStore (memory, TTL)
-         GET /api/videos/downloads/:jobId/file
-           -> Facebook Graph source URL, then an allowed CDN host
+Browser -> Next.js App Router (5173 dev / 4173 production)
+  frontend/src/app/ -> frontend/src/views/ + shared components
+  Find Video -> POST /api/videos/lookup
+Next.js rewrites -> FastAPI / Uvicorn (127.0.0.1:3000)
+  app/videos/router.py -> VideosService
+    Provider registry
+      FacebookVideoProvider -> public HTTPS HEAD redirect -> Graph API
+      YouTube / TikTok / Instagram -> PROVIDER_NOT_CONFIGURED
+    LookupStore / DownloadJobStore (memory, TTL)
+  GET /api/videos/downloads/{job_id}/file -> allowed CDN stream
 ```
-
-Controllers validate input and return JSON or a file stream. Provider calls, job records, and file transfer live in services. Replacing `DownloadJobStore` with a BullMQ queue is the extension point for moving long downloads off the request process. Redis and BullMQ are not installed; the in-memory store is enough for one local server and avoids an unused dependency.
-
-## Provider interface
-
-`VideoProvider` in `backend/src/providers/video-provider.ts` exposes:
-
-- `platform` and `hosts`
-- `isConfigured()`
-- `lookup(url)` returning metadata and qualities, never a fabricated file URL
-- Facebook additionally implements `getAuthorizedSource(videoId)` for the download step
-
-`selectProvider` chooses the adapter from the hostname. A new platform is a new class registered beside `FacebookVideoProvider`. Until that class has a real authorized client, `isConfigured()` stays false and lookup throws `PROVIDER_NOT_CONFIGURED`.
-
-## Security boundaries
-
-- Pasted URLs are parsed and checked. The server does not fetch the pasted URL.
-- Graph requests use `Authorization: Bearer` and a numeric video id. The token is not placed in the query string and is redacted if it appears in an error message.
-- CDN downloads allow only `https` URLs on `.fbcdn.net` and `.fbsbx.com`, with no userinfo and no IP hosts. Redirects are followed manually, at most three hops, and each hop must pass the same check.
-- Response content type must be a video type or `application/octet-stream`.
-- `MAX_DOWNLOAD_BYTES` stops oversized files. Request timeouts cover Graph calls and the file transfer.
-- `@nestjs/throttler` limits request rate per IP. Health checks are excluded.
-- CORS allows only `CORS_ORIGIN`.
 
 ## Frontend
 
-`createBackendVideoProvider` posts to the API and implements the existing `AuthorizedVideoProvider` used by the homepage. Download progress uses `Content-Length` when the file response includes it. The browser then receives the bytes and is asked to save them.
+The frontend lives entirely in `frontend/`, including its package files, Next.js configuration, scripts, public assets, and environment files. The root layout supplies fonts, global CSS, brand colors, and client providers. Route pages reuse `frontend/src/views/`; `frontend/src/lib/seo.ts` supplies server-rendered metadata. Homepage styles and the labeled demo layout remain intact. Unknown routes and platform slugs return 404.
 
-`/api/lookup-log` remains a Vite development logger. It is not part of the Nest API.
+`createBackendVideoProvider` preserves lookup and download behavior. A download creates a job, reads the file stream with progress, and saves a browser Blob. The Graph source URL stays in the backend. `POST /api/lookup-log` is development-only; production returns 404 and does not send logging requests.
+
+## Backend
+
+`app/main.py:create_app` loads configuration, installs error handlers and CORS, creates services and the limiter, and registers routes. `python -m app` starts Uvicorn. Backend environment loading preserves shell values.
+
+`VideoProvider` in `app/providers/base.py` exposes platform, hosts, `is_configured()`, and async `lookup()`. Facebook also has `get_authorized_source()` for rechecking access at download time.
+
+The API preserves previous JSON fields, error codes, and POST success status (201). Unknown fields are rejected; request bodies are capped while reading. Use one worker; shared persistence is required before scaling to multiple processes.
+
+## Security boundaries
+
+- Numeric ids are extracted without fetching the page. Share resolution uses HTTPS HEAD, no cookies or body parsing, and approved Facebook hosts and ports on every hop.
+- Graph calls use a numeric id and Bearer header. Tokens are never placed in query strings.
+- Media URLs and redirects require HTTPS on allowed Facebook CDN hosts without credentials or nonstandard ports. Media type, total timeout, and maximum bytes are checked.
+- Outbound HTTP request logging is suppressed to keep source URLs private. Unexpected errors log their type rather than their raw message.
+- Per-route limiting excludes health and ignores forwarded headers; proxied requests share a socket-peer bucket.
+- CORS permits configured origins only. The default frontend accesses the API through Next.js.
+
+Provider tests use injected HTTP transports. They prove behavior against controlled responses, not access to real Facebook content.
