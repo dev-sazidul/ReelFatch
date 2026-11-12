@@ -1,0 +1,13 @@
+{
+  "name": "ReelFetch",
+  "shortName": "ReelFetch",
+  "description": "Check a public video link and save a file when the source returns one.",
+  "themeColor": "#1e63b8",
+  "backgroundColor": "#fcfaf8",
+  "promo": {
+    "enabled": true,
+    "showDelayMs": 2800,
+    "dismissForDays": 14,
+    "mobileQuery": "(max-width: 900px)"
+  }
+}

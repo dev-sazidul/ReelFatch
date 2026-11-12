@@ -4,6 +4,8 @@ import { useEffect, useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ArrowDownToLine, Menu, X } from 'lucide-react';
+import { AppPromo } from '@/components/pwa/app-promo';
+import { InstallAppButton } from '@/components/pwa/install-app-button';
 import { brand } from '@/config/brand';
 
 const navLinks = [
@@ -54,17 +56,22 @@ export function SiteShell({ children }: { children: ReactNode }) {
       <header className="rf-header">
         <div className="rf-container rf-header-inner">
           <BrandLink testId="link-brand-home" onClick={() => setMenuOpen(false)} />
-          <button
-            className="rf-mobile-menu"
-            type="button"
-            aria-expanded={menuOpen}
-            aria-controls="primary-navigation"
-            onClick={() => setMenuOpen((open) => !open)}
-            data-testid="button-mobile-menu"
-          >
-            {menuOpen ? <X size={18} aria-hidden="true" /> : <Menu size={18} aria-hidden="true" />}
-            <span className="rf-sr-only">{menuOpen ? 'Close menu' : 'Open menu'}</span>
-          </button>
+          <div className="rf-header-tools">
+            <span className={menuOpen ? 'rf-install-compact-wrap is-hidden' : 'rf-install-compact-wrap'}>
+              <InstallAppButton variant="compact" />
+            </span>
+            <button
+              className="rf-mobile-menu"
+              type="button"
+              aria-expanded={menuOpen}
+              aria-controls="primary-navigation"
+              onClick={() => setMenuOpen((open) => !open)}
+              data-testid="button-mobile-menu"
+            >
+              {menuOpen ? <X size={18} aria-hidden="true" /> : <Menu size={18} aria-hidden="true" />}
+              <span className="rf-sr-only">{menuOpen ? 'Close menu' : 'Open menu'}</span>
+            </button>
+          </div>
           <nav id="primary-navigation" className={menuOpen ? 'rf-nav mobile-open' : 'rf-nav'} aria-label="Main navigation">
             {navLinks.map((item) => (
               <Link
@@ -77,11 +84,14 @@ export function SiteShell({ children }: { children: ReactNode }) {
                 {item.label}
               </Link>
             ))}
-            <Link href="/#tool" className="rf-nav-cta" onClick={() => setMenuOpen(false)} data-testid="link-nav-start">Get Started</Link>
+            <div className="rf-nav-actions">
+              <InstallAppButton />
+              <Link href="/#tool" className="rf-nav-cta" onClick={() => setMenuOpen(false)} data-testid="link-nav-start">Get Started</Link>
+            </div>
           </nav>
         </div>
       </header>
-      <main className="rf-main">{children}</main>
+      <main className="rf-main"><AppPromo />{children}</main>
       <footer className="rf-footer">
         <div className="rf-container">
           <div className="rf-footer-top">

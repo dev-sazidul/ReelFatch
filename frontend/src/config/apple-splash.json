@@ -1,0 +1,66 @@
+[
+  {
+    "href": "/splash/iphone-se-portrait.png",
+    "media": "screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"
+  },
+  {
+    "href": "/splash/iphone-se-landscape.png",
+    "media": "screen and (device-width: 667px) and (device-height: 375px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)"
+  },
+  {
+    "href": "/splash/iphone-14-portrait.png",
+    "media": "screen and (device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"
+  },
+  {
+    "href": "/splash/iphone-14-landscape.png",
+    "media": "screen and (device-width: 844px) and (device-height: 390px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)"
+  },
+  {
+    "href": "/splash/iphone-14-pro-portrait.png",
+    "media": "screen and (device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"
+  },
+  {
+    "href": "/splash/iphone-14-pro-landscape.png",
+    "media": "screen and (device-width: 852px) and (device-height: 393px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)"
+  },
+  {
+    "href": "/splash/iphone-14-plus-portrait.png",
+    "media": "screen and (device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"
+  },
+  {
+    "href": "/splash/iphone-14-plus-landscape.png",
+    "media": "screen and (device-width: 926px) and (device-height: 428px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)"
+  },
+  {
+    "href": "/splash/iphone-14-pro-max-portrait.png",
+    "media": "screen and (device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"
+  },
+  {
+    "href": "/splash/iphone-14-pro-max-landscape.png",
+    "media": "screen and (device-width: 932px) and (device-height: 430px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)"
+  },
+  {
+    "href": "/splash/ipad-10-portrait.png",
+    "media": "screen and (device-width: 810px) and (device-height: 1080px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"
+  },
+  {
+    "href": "/splash/ipad-10-landscape.png",
+    "media": "screen and (device-width: 1080px) and (device-height: 810px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)"
+  },
+  {
+    "href": "/splash/ipad-pro-11-portrait.png",
+    "media": "screen and (device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"
+  },
+  {
+    "href": "/splash/ipad-pro-11-landscape.png",
+    "media": "screen and (device-width: 1194px) and (device-height: 834px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)"
+  },
+  {
+    "href": "/splash/ipad-pro-12-portrait.png",
+    "media": "screen and (device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"
+  },
+  {
+    "href": "/splash/ipad-pro-12-landscape.png",
+    "media": "screen and (device-width: 1366px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)"
+  }
+]

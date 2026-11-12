@@ -7,6 +7,17 @@ const apiTarget = (process.env.API_PROXY_TARGET || 'http://127.0.0.1:3000').repl
 const nextConfig: NextConfig = {
   // Keep normal local builds; Docker copies the minimal standalone server into its image.
   output: process.env.DOCKER_BUILD === '1' ? 'standalone' : undefined,
+  async headers() {
+    return [
+      {
+        source: '/sw.js',
+        headers: [
+          { key: 'Cache-Control', value: 'no-cache, no-store, must-revalidate' },
+          { key: 'Service-Worker-Allowed', value: '/' },
+        ],
+      },
+    ];
+  },
   async rewrites() {
     return [
       { source: '/api/health', destination: `${apiTarget}/api/health` },
