@@ -101,7 +101,7 @@ const legalCopy: Record<string, { eyebrow: string; title: string; intro: string;
     headings: [
       ['Information you do not have to give us', 'ReelFetch does not require an account, password, or payment card. It does not keep a personal library of the videos you download.'],
       ['How links are processed', 'A submitted video URL is processed to look up formats the source returns. Temporary files used for a download are deleted after the transfer finishes.'],
-      ['Analytics, ads, and storage', 'The site loads a Google tag (GTM-54ZRKSX8), Microsoft Clarity for usage analytics, and Google AdSense for advertising. Those services may set their own cookies. ReelFetch also uses ordinary request headers to send a file to your browser. Review their policies if you want to limit that data.'],
+      ['Analytics, ads, and storage', 'The site loads a Google tag for measurement ID G-V30LSQ672C, Microsoft Clarity for usage analytics, and Google AdSense for advertising. Those services may set their own cookies. ReelFetch also uses ordinary request headers to send a file to your browser. Review their policies if you want to limit that data.'],
       ['Security', 'Pages are served over HTTPS. Do not send passwords or private media links that you are not allowed to share with a third-party tool.'],
     ],
   },

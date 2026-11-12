@@ -45,12 +45,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" style={brandColors}>
       <head>
-        <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-54ZRKSX8" />
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-V30LSQ672C" />
         <script
           dangerouslySetInnerHTML={{
             __html: `window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());`,
+gtag('js', new Date());
+gtag('config', 'G-V30LSQ672C');`,
           }}
         />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
