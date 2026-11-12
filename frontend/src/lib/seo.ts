@@ -31,7 +31,7 @@ const staticPageMetadata: Record<string, PageMetadata> = {
   },
   '/privacy': {
     title: 'Privacy Policy | ReelFetch',
-    description: 'How ReelFetch handles video links, temporary files, Microsoft Clarity, and Google AdSense. No account is required to use the downloader.',
+    description: 'How ReelFetch handles video links, temporary files, the Google tag, Microsoft Clarity, and Google AdSense. No account is required to use the downloader.',
     robots: 'index,follow',
   },
   '/terms': {
