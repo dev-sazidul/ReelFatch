@@ -87,7 +87,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
           <div className="rf-footer-top">
             <div>
               <BrandLink testId="link-footer-brand" />
-              <p className="rf-footer-note">{brand.name} is a high-speed universal video and reel downloader built for fast, clean, personal offline viewing across all modern devices.</p>
+              <p className="rf-footer-note">{brand.name} checks public video links and saves a file when the source returns one. Download only what you have permission to keep.</p>
             </div>
             <nav className="rf-footer-links" aria-label="Footer">
               {footerLinks.map((item) => (

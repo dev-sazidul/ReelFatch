@@ -10,38 +10,38 @@ export type PageMetadata = {
 
 const staticPageMetadata: Record<string, PageMetadata> = {
   '/': {
-    title: 'ReelFetch — Universal Video & Reel Downloader',
-    description: 'Free online video downloader for Facebook, Instagram, YouTube, TikTok, X, and 1,000+ sites. Download public reels, shorts, and videos in HD MP4.',
+    title: 'Online Video Downloader for Reels & Shorts | ReelFetch',
+    description: 'Paste a public YouTube, Instagram, TikTok, Facebook, X, Reddit, or Pinterest link. ReelFetch lists the download qualities that source actually returns.',
     robots: 'index,follow',
   },
   '/about': {
-    title: 'About ReelFetch — Fast & Free Universal Video Downloader',
-    description: 'Learn about ReelFetch, the high-performance online tool for saving videos and reels from major social platforms.',
+    title: 'About ReelFetch | Online Video Downloader',
+    description: 'ReelFetch is an independent web tool for checking public video links and saving a file when the source provides one. No account is required.',
     robots: 'index,follow',
   },
   '/faq': {
-    title: 'FAQ — ReelFetch Video Downloader',
-    description: 'Frequently asked questions about downloading videos from YouTube, Instagram, TikTok, Facebook, audio extraction, and device support.',
+    title: 'Video Downloader FAQ | ReelFetch',
+    description: 'Answers about public YouTube, Instagram, TikTok, and Facebook links, saved file location, quality limits, copyright, and what ReelFetch does not download.',
     robots: 'index,follow',
   },
   '/contact': {
-    title: 'Contact ReelFetch',
-    description: 'Get in touch with the ReelFetch team for technical support, inquiries, and feedback.',
+    title: 'Contact ReelFetch Support',
+    description: 'Contact ReelFetch for product questions or a copyright notice. Support email and the takedown policy are listed on this page.',
     robots: 'index,follow',
   },
   '/privacy': {
-    title: 'Privacy Policy — ReelFetch',
-    description: 'ReelFetch privacy policy. Learn how we handle video links without tracking or persistent storage.',
+    title: 'Privacy Policy | ReelFetch',
+    description: 'How ReelFetch handles video links, temporary files, Microsoft Clarity, and Google AdSense. No account is required to use the downloader.',
     robots: 'index,follow',
   },
   '/terms': {
-    title: 'Terms of Service — ReelFetch',
-    description: 'ReelFetch terms of service and acceptable use guidelines.',
+    title: 'Terms of Service | ReelFetch',
+    description: 'Terms for using ReelFetch to save public videos you have permission to keep. Availability depends on the source platform.',
     robots: 'index,follow',
   },
   '/copyright': {
-    title: 'Copyright & DMCA Policy — ReelFetch',
-    description: 'ReelFetch copyright, DMCA, and content takedown policy.',
+    title: 'Copyright & Takedown Policy | ReelFetch',
+    description: 'How to send ReelFetch a copyright notice. ReelFetch does not host a video library and is not affiliated with the source platforms.',
     robots: 'index,follow',
   },
 };
@@ -74,38 +74,46 @@ export function getPageMetadata(pathname: string): PageMetadata {
  * Server-rendered page metadata: the same title, description, robots, Open Graph,
  * Twitter, and canonical tags the Vite app set in the browser after each navigation.
  */
+export function siteOrigin() {
+  const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  if (configuredSiteUrl) {
+    try {
+      const url = new URL(configuredSiteUrl);
+      if (url.protocol === 'https:' || url.protocol === 'http:') return url.origin;
+    } catch {
+      /* Use the public site when the env value is not a valid origin. */
+    }
+  }
+  return 'https://bestdownloader.site';
+}
+
+export function absoluteUrl(pathname: string) {
+  const cleanPath = pathname.split(/[?#]/, 1)[0].replace(/\/+$/, '') || '/';
+  if (cleanPath === '/') return siteOrigin();
+  return new URL(cleanPath, `${siteOrigin()}/`).href;
+}
+
 export async function buildMetadata(pathname: string): Promise<Metadata> {
   const metadata = getPageMetadata(pathname);
-  const canonical = await canonicalUrl(pathname);
+  const canonical = absoluteUrl(pathname);
+  const index = metadata.robots.startsWith('index');
   return {
     title: metadata.title,
     description: metadata.description,
-    robots: metadata.robots,
+    robots: {
+      index,
+      follow: true,
+      googleBot: { index, follow: true, 'max-image-preview': 'large', 'max-snippet': -1, 'max-video-preview': -1 },
+    },
     alternates: { canonical },
-    openGraph: { title: metadata.title, description: metadata.description, type: 'website', url: canonical },
-    twitter: { card: 'summary_large_image', title: metadata.title, description: metadata.description },
+    openGraph: {
+      title: metadata.title,
+      description: metadata.description,
+      type: 'website',
+      url: canonical,
+      siteName: 'ReelFetch',
+      locale: 'en_US',
+    },
+    twitter: { card: 'summary', title: metadata.title, description: metadata.description },
   };
-}
-
-function configuredOrigin() {
-  const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL;
-  if (!configuredSiteUrl) return null;
-  try {
-    const url = new URL(configuredSiteUrl);
-    return url.protocol === 'https:' || url.protocol === 'http:' ? url.origin : null;
-  } catch {
-    return null;
-  }
-}
-
-async function canonicalUrl(pathname: string) {
-  const cleanPath = pathname.split(/[?#]/, 1)[0].replace(/\/+$/, '') || '/';
-  // Without NEXT_PUBLIC_SITE_URL, use the host the page was requested on, as the browser did.
-  let origin = configuredOrigin();
-  if (!origin) {
-    const { headers } = await import('next/headers');
-    const host = (await headers()).get('host') || 'localhost';
-    origin = `http://${host}`;
-  }
-  return new URL(cleanPath, `${origin}/`).href;
 }

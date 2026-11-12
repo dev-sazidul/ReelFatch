@@ -11,8 +11,8 @@ export function PlatformGrid() {
       <div className="rf-container">
         <div className="rf-section-heading">
           <span className="rf-eyebrow">Supported Platforms</span>
-          <h2 id="platforms-heading">One place to download from all major platforms.</h2>
-          <p>Easily grab videos, reels, and audio from the world’s most popular social platforms in full HD.</p>
+          <h2 id="platforms-heading">Guides for the platforms ReelFetch can check.</h2>
+          <p>Open a platform page for public videos, Reels, or Shorts. A download appears only when that source returns a file.</p>
         </div>
         <div className="rf-platform-grid">
           {platformRegistry.map(({ id, name, Icon }) => (
@@ -20,7 +20,7 @@ export function PlatformGrid() {
               <span className="rf-platform-card-icon" aria-hidden="true"><Icon size={21} /></span>
               <span className="rf-platform-card-title">{name}</span>
               <PlatformStatusBadge status={getPlatformStatus(id)} />
-              <span className="rf-platform-card-note">HD Video &amp; Audio · Ready</span>
+              <span className="rf-platform-card-note">Public videos · Guide</span>
             </Link>
           ))}
         </div>

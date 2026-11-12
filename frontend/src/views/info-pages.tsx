@@ -5,8 +5,21 @@ import { ArrowRight, CircleAlert, Mail, ShieldCheck } from 'lucide-react';
 import { FaqAccordion } from '@/components/faq-accordion';
 import { homeFaq, moreFaq } from '@/content/site';
 
-function PageHero({ eyebrow, title, intro }: { eyebrow: string; title: string; intro: string }) {
-  return <section className="rf-page-hero"><div className="rf-container"><span className="rf-eyebrow">{eyebrow}</span><h1>{title}</h1><p>{intro}</p></div></section>;
+function PageHero({ eyebrow, title, intro, current }: { eyebrow: string; title: string; intro: string; current: string }) {
+  return (
+    <section className="rf-page-hero">
+      <div className="rf-container">
+        <nav className="rf-breadcrumb" aria-label="Breadcrumb">
+          <Link href="/">Home</Link>
+          <span aria-hidden="true">/</span>
+          <span aria-current="page">{current}</span>
+        </nav>
+        <span className="rf-eyebrow">{eyebrow}</span>
+        <h1>{title}</h1>
+        <p>{intro}</p>
+      </div>
+    </section>
+  );
 }
 
 function DraftNotice() {
@@ -18,18 +31,19 @@ export function AboutPage() {
     <>
       <PageHero
         eyebrow="About ReelFetch"
-        title="Fast, simple, and universal video downloading."
-        intro="ReelFetch is a high-performance web tool designed to help creators, researchers, and users save public videos, Reels, and Shorts for offline viewing."
+        title="An independent downloader for public videos."
+        intro="ReelFetch checks a public video link and offers a file only when that source returns one."
+        current="About"
       />
       <div className="rf-container rf-prose">
         <h2>What ReelFetch Does</h2>
         <p>
-          ReelFetch connects you directly with media from your favorite social platforms. Paste a link from YouTube, Instagram, TikTok, Facebook, X (Twitter), Reddit, or Pinterest, and ReelFetch instantly analyzes the stream and provides high-definition MP4 download options.
+          Paste a public link from <Link href="/platform/youtube">YouTube</Link>, <Link href="/platform/instagram">Instagram</Link>, <Link href="/platform/tiktok">TikTok</Link>, <Link href="/platform/facebook">Facebook</Link>, <Link href="/platform/x">X</Link>, <Link href="/platform/reddit">Reddit</Link>, or <Link href="/platform/pinterest">Pinterest</Link>. The homepage then lists the qualities that link actually provides.
         </p>
 
-        <h2>Universal Platform Support</h2>
+        <h2>What a listed platform means</h2>
         <p>
-          Unlike tools restricted to a single platform, ReelFetch utilizes a versatile backend engine capable of retrieving videos from thousands of websites with maximum fidelity, audio synchronization, and fast delivery.
+          Each platform page explains which public links to paste and what ReelFetch will not retrieve, including private accounts and deleted posts. A platform page is not a promise that every URL on that site can be saved.
         </p>
 
         <h2>Our Core Values</h2>
@@ -37,7 +51,7 @@ export function AboutPage() {
           <strong>No Bloat or Paywalls:</strong> You never need to install extensions, apps, or sign up for an account. ReelFetch is 100% free and straightforward.
         </p>
         <p>
-          <strong>Privacy First:</strong> We do not track your downloads, archive personal libraries, or retain files after your transfer is completed.
+          <strong>No account:</strong> Checking a link does not require registration. Temporary download files are removed after the transfer. Analytics and advertising are described in the <Link href="/privacy">privacy policy</Link>.
         </p>
 
         <Link href="/#tool" className="rf-button rf-button-primary" style={{ marginTop: 14 }} data-testid="link-about-home">
@@ -53,8 +67,9 @@ export function ContactPage() {
     <>
       <PageHero
         eyebrow="Contact"
-        title="We are here to help."
-        intro="Have feedback, feature suggestions, or questions regarding ReelFetch? Get in touch with us."
+        title="Contact ReelFetch"
+        intro="Use this page for product questions. Copyright notices have a separate address."
+        current="Contact"
       />
       <div className="rf-container rf-prose">
         <div className="rf-contact-card">
@@ -82,12 +97,12 @@ const legalCopy: Record<string, { eyebrow: string; title: string; intro: string;
   privacy: {
     eyebrow: 'Privacy Policy',
     title: 'Your privacy is respected and protected.',
-    intro: 'This Privacy Policy explains how ReelFetch handles video links and data when you use our service.',
+    intro: 'This policy describes how ReelFetch handles a video link you submit, plus the analytics and advertising scripts loaded with the site.',
     headings: [
-      ['Information We Do Not Collect', 'ReelFetch does not require an account, email address, password, or credit card. We do not track user identities or maintain personal download libraries.'],
-      ['How Links Are Processed', 'When you submit a video URL, it is temporarily processed by our server to extract available video quality streams. As soon as your download finishes, temporary file fragments are permanently deleted.'],
-      ['Cookies & Storage', 'ReelFetch does not use tracking cookies or persistent advertising identifiers. Basic session headers are used solely to deliver video stream chunks to your browser.'],
-      ['Security', 'All communication with ReelFetch is encrypted using standard HTTPS. Outbound media streaming is routed directly to the client browser without intermediate persistent storage.'],
+      ['Information you do not have to give us', 'ReelFetch does not require an account, password, or payment card. It does not keep a personal library of the videos you download.'],
+      ['How links are processed', 'A submitted video URL is processed to look up formats the source returns. Temporary files used for a download are deleted after the transfer finishes.'],
+      ['Analytics, ads, and storage', 'The site loads Microsoft Clarity for usage analytics and Google AdSense for advertising. Those services may set their own cookies. ReelFetch also uses ordinary request headers to send a file to your browser. Review their policies if you want to limit that data.'],
+      ['Security', 'Pages are served over HTTPS. Do not send passwords or private media links that you are not allowed to share with a third-party tool.'],
     ],
   },
   terms: {
@@ -117,7 +132,7 @@ function LegalPage({ page }: { page: 'privacy' | 'terms' | 'copyright' }) {
   const content = legalCopy[page];
   return (
     <>
-      <PageHero eyebrow={content.eyebrow} title={content.title} intro={content.intro} />
+      <PageHero eyebrow={content.eyebrow} title={content.title} intro={content.intro} current={content.eyebrow} />
       <div className="rf-container rf-prose">
         {content.headings.map(([heading, text]) => (
           <section key={heading}>
@@ -142,16 +157,27 @@ export function FaqPage() {
     <>
       <PageHero
         eyebrow="FAQ"
-        title="Frequently Asked Questions"
-        intro="Find answers to common questions about downloading videos, reels, audio quality, and supported platforms."
+        title="Video downloader questions"
+        intro="These answers cover public links, file quality, private posts, and copyright. They match the questions shown on this page."
+        current="FAQ"
       />
       <div className="rf-container" style={{ padding: '8px 0 80px' }}>
         <FaqAccordion items={[...homeFaq, ...moreFaq]} idPrefix="faq" />
+        <nav className="rf-related" aria-label="Platform guides" style={{ marginTop: 28 }}>
+          <Link href="/platform/facebook">Facebook</Link>
+          <Link href="/platform/youtube">YouTube</Link>
+          <Link href="/platform/instagram">Instagram</Link>
+          <Link href="/platform/tiktok">TikTok</Link>
+          <Link href="/platform/x">X</Link>
+          <Link href="/platform/pinterest">Pinterest</Link>
+          <Link href="/platform/reddit">Reddit</Link>
+          <Link href="/#tool">Open the downloader</Link>
+        </nav>
       </div>
     </>
   );
 }
 
 export function NotFoundPage() {
-  return <><PageHero eyebrow="Not found" title="That page isn’t here." intro="The address may have changed, or the page may not exist." /><div className="rf-container rf-prose"><Link href="/" className="rf-button rf-button-primary" data-testid="link-not-found-home">Back to ReelFetch <ArrowRight size={15} /></Link></div></>;
+  return <><PageHero eyebrow="Not found" title="That page isn’t here." intro="The address may have changed, or the page may not exist." current="Not found" /><div className="rf-container rf-prose"><Link href="/" className="rf-button rf-button-primary" data-testid="link-not-found-home">Back to ReelFetch <ArrowRight size={15} /></Link></div></>;
 }

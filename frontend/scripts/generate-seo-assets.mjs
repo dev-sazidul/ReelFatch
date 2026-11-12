@@ -12,14 +12,15 @@ const registry = JSON.parse(await readFile(registryPath, 'utf8'));
 
 function getSiteOrigin() {
   const configured = process.env.NEXT_PUBLIC_SITE_URL;
-  if (!configured) return null;
-  try {
-    const url = new URL(configured);
-    if (url.protocol !== 'https:' && url.protocol !== 'http:') return null;
-    return url.origin;
-  } catch {
-    return null;
+  if (configured) {
+    try {
+      const url = new URL(configured);
+      if (url.protocol === 'https:' || url.protocol === 'http:') return url.origin;
+    } catch {
+      /* Fall back to the public site when the env value is not a valid origin. */
+    }
   }
+  return 'https://bestdownloader.site';
 }
 
 function escapeXml(value) {
@@ -31,6 +32,10 @@ const publicRoutes = [
   { path: '/', priority: '1.0', changefreq: 'weekly' },
   { path: '/about', priority: '0.6', changefreq: 'monthly' },
   { path: '/faq', priority: '0.8', changefreq: 'monthly' },
+  { path: '/contact', priority: '0.4', changefreq: 'yearly' },
+  { path: '/privacy', priority: '0.3', changefreq: 'yearly' },
+  { path: '/terms', priority: '0.3', changefreq: 'yearly' },
+  { path: '/copyright', priority: '0.3', changefreq: 'yearly' },
   ...registry.platforms
     .filter((platform) => platform.status === 'Available')
     .map((platform) => ({ path: `/platform/${platform.id}`, priority: '0.7', changefreq: 'monthly' })),
@@ -38,7 +43,7 @@ const publicRoutes = [
 
 const sitemapUrls = origin
   ? publicRoutes.map(({ path: route, priority, changefreq }) => `  <url>
-    <loc>${escapeXml(new URL(route, `${origin}/`).href)}</loc>
+    <loc>${escapeXml(route === '/' ? origin : new URL(route, `${origin}/`).href)}</loc>
     <changefreq>${changefreq}</changefreq>
     <priority>${priority}</priority>
   </url>`).join('\n')
@@ -52,6 +57,7 @@ ${sitemapUrls}
 
 const robots = `User-agent: *
 Allow: /
+Disallow: /api/
 ${origin ? `Sitemap: ${origin}/sitemap.xml\n` : '# Set NEXT_PUBLIC_SITE_URL before publishing to add the absolute sitemap URL.\n'}`;
 
 await Promise.all([

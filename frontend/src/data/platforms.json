@@ -6,16 +6,28 @@
       "icon": "facebook",
       "domains": ["facebook.com", "fb.watch"],
       "status": "Available",
-      "seoTitle": "Facebook Video Links — ReelFetch",
-      "seoDescription": "ReelFetch looks up Facebook videos through the official Graph API when a server access token is configured. Share links without a numeric video id are not resolved.",
+      "seoTitle": "Facebook Video Downloader | ReelFetch",
+      "seoDescription": "Paste a public Facebook video or Reel link into ReelFetch. Download a listed quality when Facebook returns a file. Private posts are not saved.",
+      "headline": "Download public Facebook videos and Reels",
+      "intro": "Use ReelFetch when you have a public Facebook watch, Reel, or video link and you are allowed to keep a copy. The tool shows only the qualities that link returns.",
+      "steps": [
+        "Open the public Facebook video or Reel and copy its link.",
+        "Paste the link on the ReelFetch homepage and choose Find Video.",
+        "Select a listed quality, then save the file with your browser."
+      ],
+      "note": "fb.watch and facebook.com/share links are accepted when they resolve to a public video. A recognized link can still fail if the post is private, removed, or region-limited.",
       "faqs": [
         {
-          "question": "Can ReelFetch download Facebook videos right now?",
-          "answer": "Only when the server has a Facebook user or Page access token that is allowed to read the video. The official Graph API source field is the file address. Without a token, lookup returns PROVIDER_NOT_CONFIGURED and nothing is downloaded."
+          "question": "Which Facebook links can ReelFetch check?",
+          "answer": "Public watch, Reel, and video links, including fb.watch addresses that point at a public video. Private posts and login-only videos are not downloaded."
         },
         {
-          "question": "Which Facebook URL formats are recognized?",
-          "answer": "Numeric watch, reel, and videos links can be sent to the Graph API. facebook.com/share and fb.watch short links do not contain a video id. ReelFetch does not open those pages to extract one."
+          "question": "Does every Facebook link include Full HD?",
+          "answer": "No. ReelFetch lists the formats Facebook returns for that link. Full HD appears only when that video actually offers it."
+        },
+        {
+          "question": "Is ReelFetch affiliated with Facebook?",
+          "answer": "No. ReelFetch is an independent tool and is not endorsed by Meta or Facebook."
         }
       ]
     },
@@ -25,16 +37,28 @@
       "icon": "youtube",
       "domains": ["youtube.com", "youtu.be", "youtube-nocookie.com"],
       "status": "Available",
-      "seoTitle": "YouTube Video Links — ReelFetch",
-      "seoDescription": "YouTube URL formats are listed in the ReelFetch platform registry. Look up and download public YouTube videos.",
+      "seoTitle": "YouTube Video Downloader | ReelFetch",
+      "seoDescription": "Check a public YouTube video or Shorts link and save a quality YouTube provides. Private, deleted, and blocked videos are not downloaded.",
+      "headline": "Download public YouTube videos and Shorts",
+      "intro": "Paste a public YouTube or youtu.be link to see the download options that video exposes. ReelFetch does not bypass private videos, age gates you cannot pass, or region blocks.",
+      "steps": [
+        "Copy the public YouTube video or Shorts URL.",
+        "Paste it into ReelFetch and choose Find Video.",
+        "Download one of the qualities shown for that video."
+      ],
+      "note": "YouTube may change which formats a video offers. If a quality is missing from the list, ReelFetch cannot invent it.",
       "faqs": [
         {
-          "question": "Does ReelFetch process YouTube links?",
-          "answer": "Yes. ReelFetch checks YouTube video links and prepares available quality options for download."
+          "question": "Can I download a YouTube Short the same way as a normal video?",
+          "answer": "Yes, when the Short is public. Paste the Shorts link, review the listed qualities, and download one of them."
         },
         {
           "question": "Will every YouTube link be downloadable?",
-          "answer": "Public videos are supported. Private or geographically restricted videos cannot be downloaded."
+          "answer": "No. Private, deleted, members-only, and geographically restricted videos can fail even when the URL looks valid."
+        },
+        {
+          "question": "Is ReelFetch an official YouTube app?",
+          "answer": "No. ReelFetch is independent and is not affiliated with or endorsed by YouTube."
         }
       ]
     },
@@ -44,16 +68,28 @@
       "icon": "tiktok",
       "domains": ["tiktok.com"],
       "status": "Available",
-      "seoTitle": "TikTok Video Links — ReelFetch",
-      "seoDescription": "TikTok URL formats are listed in the ReelFetch platform registry. Look up and download public TikTok videos.",
+      "seoTitle": "TikTok Video Downloader | ReelFetch",
+      "seoDescription": "Paste a public TikTok video link to see the file options ReelFetch can prepare. Private accounts and removed clips are not downloaded.",
+      "headline": "Download public TikTok videos",
+      "intro": "ReelFetch checks public TikTok video links and lists a file when TikTok provides one. Photo posts, private accounts, and deleted clips are outside what this page promises.",
+      "steps": [
+        "Copy the link of a public TikTok video.",
+        "Paste it on ReelFetch and choose Find Video.",
+        "Save a listed file to your browser downloads."
+      ],
+      "note": "A TikTok URL proves the address shape, not that a video file is still public.",
       "faqs": [
         {
           "question": "Can I download a TikTok video with ReelFetch?",
-          "answer": "Yes. ReelFetch checks public TikTok video links and prepares download options."
+          "answer": "You can try any public TikTok video link. ReelFetch downloads a file only when that clip is available to the lookup."
         },
         {
-          "question": "Does URL recognition confirm that a video is available?",
-          "answer": "URL recognition identifies the format, and lookup checks if the public video source is available."
+          "question": "Does ReelFetch keep a copy of TikTok videos?",
+          "answer": "No. The file is prepared for your download and temporary server data is discarded after the transfer."
+        },
+        {
+          "question": "Are private TikTok accounts supported?",
+          "answer": "No. Log in on TikTok if you need to view private content. ReelFetch does not access private accounts."
         }
       ]
     },
@@ -63,16 +99,28 @@
       "icon": "instagram",
       "domains": ["instagram.com"],
       "status": "Available",
-      "seoTitle": "Instagram Video Links — ReelFetch",
-      "seoDescription": "Instagram URL formats are listed in the ReelFetch platform registry. Look up and download public Instagram Reels and videos.",
+      "seoTitle": "Instagram Reels Downloader | ReelFetch",
+      "seoDescription": "Check a public Instagram Reel or video post and download a quality Instagram returns. Private accounts and restricted posts are skipped.",
+      "headline": "Download public Instagram Reels and videos",
+      "intro": "Paste a public Instagram Reel or video post link. ReelFetch shows download choices only when that post exposes a video file. Private profiles are not retrieved.",
+      "steps": [
+        "Copy the link of a public Reel or video post.",
+        "Paste it into ReelFetch and choose Find Video.",
+        "Download a quality that appears in the result."
+      ],
+      "note": "Stories and private posts are not promised. If Instagram does not return a file, ReelFetch will not create one.",
       "faqs": [
         {
-          "question": "Does ReelFetch retrieve Instagram videos?",
-          "answer": "Yes. ReelFetch checks public Instagram Reels and videos for download."
+          "question": "Does ReelFetch download Instagram Reels?",
+          "answer": "Public Reels can be checked. You get a file only when Instagram returns one for that link."
         },
         {
-          "question": "Can all Instagram videos be saved?",
-          "answer": "Public Reels and videos can be saved. Private accounts or restricted posts cannot be accessed."
+          "question": "Can private Instagram posts be saved?",
+          "answer": "No. ReelFetch does not log into Instagram and does not download private or restricted posts."
+        },
+        {
+          "question": "Is ReelFetch part of Instagram?",
+          "answer": "No. ReelFetch is an independent downloader and is not sponsored by Instagram or Meta."
         }
       ]
     },
@@ -82,16 +130,28 @@
       "icon": "x",
       "domains": ["x.com", "twitter.com"],
       "status": "Available",
-      "seoTitle": "X Video Links — ReelFetch",
-      "seoDescription": "X URL formats are listed in the ReelFetch platform registry. Look up and download public videos from X (formerly Twitter).",
+      "seoTitle": "X (Twitter) Video Downloader | ReelFetch",
+      "seoDescription": "Paste a public X or Twitter post link that contains video. ReelFetch lists a download when that post returns a video file.",
+      "headline": "Download public videos from X",
+      "intro": "ReelFetch accepts public x.com and twitter.com links. It can prepare a file when the post contains video. Text-only posts and protected accounts do not produce a download.",
+      "steps": [
+        "Copy the link of a public post that includes video.",
+        "Paste the x.com or twitter.com URL into ReelFetch.",
+        "Choose Find Video, then save a listed quality."
+      ],
+      "note": "Recognizing an X link only means the address is on X. The post still has to contain a public video.",
       "faqs": [
         {
-          "question": "Does ReelFetch process links from X?",
-          "answer": "Yes. ReelFetch checks public X/Twitter video links and prepares download options."
+          "question": "Do both x.com and twitter.com links work?",
+          "answer": "Yes. ReelFetch recognizes public links on both host names and checks them for video."
         },
         {
-          "question": "What does a recognized X URL mean?",
-          "answer": "The URL is recognized and checked for downloadable video media."
+          "question": "Can I download a post that is only text or images?",
+          "answer": "No. This page is for posts that contain a video file. Image-only posts are not turned into video."
+        },
+        {
+          "question": "Does ReelFetch represent X?",
+          "answer": "No. ReelFetch is not affiliated with or endorsed by X."
         }
       ]
     },
@@ -101,16 +161,28 @@
       "icon": "pinterest",
       "domains": ["pinterest.com", "pin.it"],
       "status": "Available",
-      "seoTitle": "Pinterest Video Links — ReelFetch",
-      "seoDescription": "Pinterest URL formats are listed in the ReelFetch platform registry. Look up and download public Pinterest video pins.",
+      "seoTitle": "Pinterest Video Downloader | ReelFetch",
+      "seoDescription": "Check a public Pinterest video pin, including pin.it links. Static image pins are not converted into video downloads.",
+      "headline": "Download public Pinterest video pins",
+      "intro": "Paste a public Pinterest or pin.it link when the pin contains video. ReelFetch lists a file only if that pin returns video media.",
+      "steps": [
+        "Copy the public pin link from Pinterest or pin.it.",
+        "Paste it into ReelFetch and choose Find Video.",
+        "Download a quality if the result lists one."
+      ],
+      "note": "Image pins, idea pins without a video file, and private boards are not downloadable videos.",
       "faqs": [
         {
           "question": "Can ReelFetch download Pinterest videos?",
-          "answer": "Yes. Public Pinterest video pins are checked and made available for download."
+          "answer": "Public pins that contain video can be checked. The download exists only when Pinterest returns a video file."
         },
         {
-          "question": "Does a Pinterest link guarantee a downloadable source?",
-          "answer": "Only pins that contain video media can be downloaded."
+          "question": "Will an image pin become an MP4?",
+          "answer": "No. ReelFetch does not turn a still image into a video."
+        },
+        {
+          "question": "Are pin.it short links accepted?",
+          "answer": "Yes. Short pin.it links are recognized and then checked like other public Pinterest URLs."
         }
       ]
     },
@@ -120,16 +192,28 @@
       "icon": "reddit",
       "domains": ["reddit.com", "redd.it"],
       "status": "Available",
-      "seoTitle": "Reddit Video Links — ReelFetch",
-      "seoDescription": "Reddit URL formats are listed in the ReelFetch platform registry. Look up and download public Reddit videos.",
+      "seoTitle": "Reddit Video Downloader | ReelFetch",
+      "seoDescription": "Paste a public Reddit post with video, including redd.it links. ReelFetch prepares a file when that post exposes video media.",
+      "headline": "Download public Reddit videos",
+      "intro": "ReelFetch checks public Reddit and redd.it links that contain video. Text posts, image posts, and private communities do not produce a video file.",
+      "steps": [
+        "Copy the link of a public Reddit post that plays video.",
+        "Paste it into ReelFetch and choose Find Video.",
+        "Save a listed file. Audio is included when the source provides it."
+      ],
+      "note": "Some Reddit videos store picture and sound separately. A combined file is available only when the server can prepare one from what Reddit returns.",
       "faqs": [
         {
-          "question": "Does ReelFetch retrieve Reddit video sources?",
-          "answer": "Yes. ReelFetch checks public Reddit video posts and merges audio and video streams for download."
+          "question": "Does ReelFetch download Reddit videos?",
+          "answer": "Public video posts can be checked. You receive a file only when the post still exposes video media."
         },
         {
-          "question": "What does recognizing a Reddit link do?",
-          "answer": "It checks the post for embedded video content and prepares the file."
+          "question": "Are redd.it links supported?",
+          "answer": "Yes. Short redd.it links are recognized and checked the same way as reddit.com posts."
+        },
+        {
+          "question": "Is every Reddit post a video?",
+          "answer": "No. Links, images, and text posts are not downloaded as video."
         }
       ]
     }

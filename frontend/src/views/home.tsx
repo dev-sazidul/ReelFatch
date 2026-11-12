@@ -18,9 +18,9 @@ export function HeroSection() {
   return (
     <section className="rf-hero" id="tool">
       <div className="rf-container rf-hero-inner">
-        <p className="rf-eyebrow">Universal Video Downloader</p>
-        <h1>Download Videos &amp; Reels from Any Platform</h1>
-        <p className="rf-lead">Save high-definition videos, reels, and shorts from Facebook, Instagram, YouTube, TikTok, X, and more. Fast, free, and in full HD.</p>
+        <p className="rf-eyebrow">Online Video Downloader</p>
+        <h1>Download Public Videos &amp; Reels</h1>
+        <p className="rf-lead">Paste a public link from YouTube, Instagram, TikTok, Facebook, X, Reddit, or Pinterest. ReelFetch lists the qualities that source returns.</p>
         <VideoUrlForm
           url={lookup.url}
           notice={lookup.notice}

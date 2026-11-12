@@ -32,6 +32,10 @@ type PlatformConfig = {
   status: PlatformStatus;
   seoTitle: string;
   seoDescription: string;
+  headline: string;
+  intro: string;
+  steps: string[];
+  note: string;
   faqs: { question: string; answer: string }[];
 };
 
@@ -97,8 +101,16 @@ export function detectPlatformUrl(rawUrl: string):
       icon: 'facebook',
       domains: [hostname],
       status: 'Available',
-      seoTitle: `${capitalized} Video Downloader — ReelFetch`,
-      seoDescription: `Download ${capitalized} videos in high quality with ReelFetch.`,
+      seoTitle: `${capitalized} Video Downloader | ReelFetch`,
+      seoDescription: `Check a public ${capitalized} video link on ReelFetch. A download is offered only when that source returns a file.`,
+      headline: `Download ${capitalized} videos`,
+      intro: `Paste a public ${capitalized} video link. ReelFetch lists a file only when the source provides one.`,
+      steps: [
+        'Copy the public video link from the source site.',
+        'Paste it into ReelFetch and choose Find Video.',
+        'Download a quality that is actually listed.',
+      ],
+      note: 'A recognized web address is not a guarantee that a video file is available.',
       faqs: [],
       Icon: SiYoutube,
     };

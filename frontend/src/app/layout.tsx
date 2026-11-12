@@ -1,11 +1,16 @@
 import type { CSSProperties, ReactNode } from 'react';
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
+import { JsonLd } from '@/components/json-ld';
 import { Providers } from '@/app/providers';
 import { brand } from '@/config/brand';
+import { siteGraph } from '@/lib/structured-data';
+import { siteOrigin } from '@/lib/seo';
 import '@/index.css';
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteOrigin()),
+  applicationName: 'ReelFetch',
   icons: { icon: { url: '/favicon.svg', type: 'image/svg+xml' } },
 };
 
@@ -34,6 +39,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         />
       </head>
       <body>
+        <JsonLd data={siteGraph()} />
         <Providers>{children}</Providers>
         <Script id="microsoft-clarity" strategy="afterInteractive">
           {`(function(c,l,a,r,i,t,y){
