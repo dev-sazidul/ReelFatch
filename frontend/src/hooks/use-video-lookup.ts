@@ -1,5 +1,6 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { detectPlatformUrl } from '@/data/platforms';
+import { readInboundVideoUrl } from '@/lib/inbound-video-url';
 import type { Notice } from '@/components/download-status';
 import { classifyFacebookLink, facebookLinkLabel } from '@/services/facebook-link';
 import { reportLookup } from '@/services/lookup-log';
@@ -61,9 +62,10 @@ export function useVideoLookup() {
     }
   };
 
-  const submit = async (event?: FormEvent) => {
+  const submit = async (event?: FormEvent, overrideUrl?: string) => {
     event?.preventDefault();
-    const submittedUrl = url.trim();
+    const submittedUrl = (overrideUrl ?? url).trim();
+    if (overrideUrl) setUrl(overrideUrl);
     const detection = detectPlatformUrl(submittedUrl);
     clearResult();
 
@@ -136,6 +138,33 @@ export function useVideoLookup() {
       setNotice({ kind: noticeKind(code), text: detail });
     }
   };
+
+  const submitRef = useRef(submit);
+  submitRef.current = submit;
+
+  useEffect(() => {
+    const incoming = readInboundVideoUrl(window.location.href);
+    if (!incoming) return;
+    if (incoming.ok) setUrl(incoming.url);
+    else setNotice({ kind: incoming.kind, text: incoming.message });
+
+    let cancelled = false;
+    const timer = window.setTimeout(() => {
+      if (cancelled) return;
+      const clean = new URL(window.location.href);
+      if (clean.searchParams.has('url')) {
+        clean.searchParams.delete('url');
+        const next = `${clean.pathname}${clean.search}${clean.hash}`;
+        window.history.replaceState(null, '', next || '/');
+      }
+      if (incoming.ok) void submitRef.current(undefined, incoming.url);
+    }, 0);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, []);
 
   return {
     url,
