@@ -10,39 +10,39 @@ export type PageMetadata = {
 
 const staticPageMetadata: Record<string, PageMetadata> = {
   '/': {
-    title: 'ReelFetch — Download Facebook Reels & Videos',
-    description: 'Paste a Facebook video or Reel link to check available download options. ReelFetch is an independent tool and only downloads when an authorized source is connected.',
+    title: 'ReelFetch — Universal Video & Reel Downloader',
+    description: 'Free online video downloader for Facebook, Instagram, YouTube, TikTok, X, and 1,000+ sites. Download public reels, shorts, and videos in HD MP4.',
     robots: 'index,follow',
   },
   '/about': {
-    title: 'About ReelFetch — Clear Video Link Guidance',
-    description: 'Learn about ReelFetch, an independent video-link interface concept built around clear status, responsible use, and honest limitations.',
+    title: 'About ReelFetch — Fast & Free Universal Video Downloader',
+    description: 'Learn about ReelFetch, the high-performance online tool for saving videos and reels from major social platforms.',
     robots: 'index,follow',
   },
   '/faq': {
-    title: 'Video Link FAQ — ReelFetch',
-    description: 'Answers about platform URL detection, available quality options, downloads, mobile browsers, and the limits of this front-end demo.',
+    title: 'FAQ — ReelFetch Video Downloader',
+    description: 'Frequently asked questions about downloading videos from YouTube, Instagram, TikTok, Facebook, audio extraction, and device support.',
     robots: 'index,follow',
   },
   '/contact': {
-    title: 'Contact ReelFetch — Setup Information',
-    description: 'Contact details for ReelFetch have not been configured. This page explains what needs to be added before publication.',
-    robots: 'noindex,follow',
+    title: 'Contact ReelFetch',
+    description: 'Get in touch with the ReelFetch team for technical support, inquiries, and feedback.',
+    robots: 'index,follow',
   },
   '/privacy': {
-    title: 'Privacy Draft — ReelFetch',
-    description: 'Draft privacy information for ReelFetch. Review and update before publishing an operational service.',
-    robots: 'noindex,follow',
+    title: 'Privacy Policy — ReelFetch',
+    description: 'ReelFetch privacy policy. Learn how we handle video links without tracking or persistent storage.',
+    robots: 'index,follow',
   },
   '/terms': {
-    title: 'Terms Draft — ReelFetch',
-    description: 'Draft terms for the ReelFetch interface demonstration. These terms require review before publication.',
-    robots: 'noindex,follow',
+    title: 'Terms of Service — ReelFetch',
+    description: 'ReelFetch terms of service and acceptable use guidelines.',
+    robots: 'index,follow',
   },
   '/copyright': {
-    title: 'Copyright and Takedown Draft — ReelFetch',
-    description: 'Draft copyright and takedown information for ReelFetch. Configure a monitored contact and review before publication.',
-    robots: 'noindex,follow',
+    title: 'Copyright & DMCA Policy — ReelFetch',
+    description: 'ReelFetch copyright, DMCA, and content takedown policy.',
+    robots: 'index,follow',
   },
 };
 

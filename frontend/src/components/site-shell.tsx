@@ -8,6 +8,7 @@ import { brand } from '@/config/brand';
 
 const navLinks = [
   { href: '/', label: 'Home' },
+  { href: '/#platforms', label: 'Platforms' },
   { href: '/#how-it-works', label: 'How It Works' },
   { href: '/#faq', label: 'FAQ' },
   { href: '/about', label: 'About' },
@@ -86,7 +87,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
           <div className="rf-footer-top">
             <div>
               <BrandLink testId="link-footer-brand" />
-              <p className="rf-footer-note">{brand.name} is an independent tool and is not affiliated with or endorsed by Meta or Facebook.</p>
+              <p className="rf-footer-note">{brand.name} is a high-speed universal video and reel downloader built for fast, clean, personal offline viewing across all modern devices.</p>
             </div>
             <nav className="rf-footer-links" aria-label="Footer">
               {footerLinks.map((item) => (

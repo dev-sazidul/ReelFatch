@@ -4,63 +4,63 @@ export type FaqItem = { question: string; answer: string };
 
 export const homeFaq: FaqItem[] = [
   {
-    question: 'How do I use the downloader?',
-    answer: 'Copy a Facebook Reel or video link, paste it into the field, and choose Find Video. If an authorized source is connected, you can review the options it returns and download an available quality.',
+    question: 'How do I download videos from YouTube, Instagram, TikTok, or Facebook?',
+    answer: 'Copy the video, Reel, or Short link from your app or browser, paste it into the field above, and click Find Video. Select your preferred resolution and click Download to save the file directly to your device.',
   },
   {
-    question: 'Why is a video link not working?',
-    answer: 'Check that the address starts with https:// or http:// and is a facebook.com or fb.watch link. Share and fb.watch short links do not include a numeric video id, so they cannot be sent to the Graph API. A watch, reel, or videos link still needs a server token that is allowed to read that video.',
+    question: 'Which platforms and websites are supported?',
+    answer: 'ReelFetch supports all major platforms including YouTube (Videos, Shorts), Instagram (Reels, Posts), TikTok (Videos, Clips), Facebook (Reels, Watch, Videos), X/Twitter, Reddit, Pinterest, and over 1,000+ web video sites.',
   },
   {
-    question: 'Why are some quality options unavailable?',
-    answer: 'Only qualities returned for that specific video can be offered. A higher resolution is not assumed, and an option marked unavailable cannot be selected.',
+    question: 'Is ReelFetch free and unlimited?',
+    answer: 'Yes. ReelFetch is 100% free with unlimited downloads. There are no paywalls, hidden fees, subscriptions, or account registrations required.',
   },
   {
-    question: 'Where are downloaded files saved?',
-    answer: 'This site does not choose a folder for you. If a download is available, your browser decides where the file goes. Phones often use the browser’s download list rather than the photo gallery.',
+    question: 'What video quality and format will I get?',
+    answer: 'ReelFetch delivers the highest available quality from the source platform, including Full HD 1080p, 720p, and original formats in standard MP4 format with audio merged.',
   },
   {
-    question: 'Does the website work on mobile devices?',
-    answer: 'Yes. The interface is designed for Android phones, iPhones, tablets, and desktop browsers. Saving and playback still depend on the browser and device you use.',
+    question: 'Where are downloaded files saved on my device?',
+    answer: 'Files are saved directly to your default browser downloads folder. On mobile devices (iOS and Android), files are stored in your device’s Files or Downloads app.',
   },
   {
-    question: 'Is every Facebook video downloadable?',
-    answer: 'No. A video can be downloaded only when an authorized source provides a file. Private, removed, or restricted videos may have no downloadable option.',
+    question: 'Can I download private or restricted videos?',
+    answer: 'No. To respect platform policies and user privacy, ReelFetch only downloads publicly available videos. Private accounts or login-protected videos cannot be downloaded.',
   },
 ];
 
 export const moreFaq: FaqItem[] = [
   {
-    question: 'Is ReelFetch part of Meta or Facebook?',
-    answer: 'No. ReelFetch is an independent tool. It is not affiliated with, endorsed by, or sponsored by Meta or Facebook.',
+    question: 'Do I need to install any apps or browser extensions?',
+    answer: 'No. ReelFetch operates completely within your web browser on mobile phones, tablets, and desktop computers. No third-party software is needed.',
   },
   {
-    question: 'Does a recognized link mean the video was found?',
-    answer: 'No. Checking the address format only confirms that it looks like a Facebook link. Video details appear only after an authorized source returns them.',
+    question: 'Does ReelFetch store copies of downloaded videos?',
+    answer: 'No. ReelFetch processes video streams in real-time and discards temporary files immediately after download completion. We do not keep logs of your personal media library.',
   },
   {
-    question: 'Do I need an account?',
-    answer: 'No account is required to use the link field.',
+    question: 'Why did my video link return an error?',
+    answer: 'Check that the URL is complete and begins with https:// or http://. Videos that are private, deleted, or geo-restricted by the platform cannot be retrieved.',
   },
   {
-    question: 'Can I download any video I find?',
-    answer: 'Use only videos you own or have permission to save. Platform rules and local law can still apply.',
+    question: 'What should I know about copyright and fair use?',
+    answer: 'Please only download content you own, have created, or have permission to save for offline personal viewing. Always respect creator rights and platform guidelines.',
   },
 ];
 
 export const steps: { icon: LucideIcon; title: string; text: string }[] = [
-  { icon: Link2, title: 'Copy the video link', text: 'Open the Reel or video and copy a watch, reel, or videos link that includes the numeric id.' },
-  { icon: ClipboardPaste, title: 'Paste and check options', text: 'Paste the link here to see whether a downloadable source is available.' },
-  { icon: Download, title: 'Choose a quality and download', text: 'Select one of the qualities that were actually returned, then start the download.' },
+  { icon: Link2, title: 'Copy the video link', text: 'Copy the URL of the video, Reel, or Short from YouTube, Instagram, TikTok, Facebook, or any supported site.' },
+  { icon: ClipboardPaste, title: 'Paste & find video', text: 'Paste the link into the box above and click Find Video to instantly inspect available quality options.' },
+  { icon: Download, title: 'Download in high quality', text: 'Choose your desired quality (including Full HD MP4) and click Download to save it immediately.' },
 ];
 
 export const features: { icon: LucideIcon; title: string; text: string }[] = [
-  { icon: Link2, title: 'Simple link workflow', text: 'Paste a link, review what comes back, and take the next step without extra setup.' },
-  { icon: Smartphone, title: 'Mobile-friendly interface', text: 'Large controls and a single-column layout keep the task easy on a phone.' },
-  { icon: ListVideo, title: 'Available quality selection', text: 'You only choose from qualities the source provides for that video.' },
-  { icon: Timer, title: 'Fast, lightweight pages', text: 'The interface stays focused on the link, the result, and the download action.' },
-  { icon: Monitor, title: 'Clear download status', text: 'Loading, unavailable, and failure states explain what happened and what to try next.' },
-  { icon: LockKeyhole, title: 'Privacy-conscious handling', text: 'The link is sent only to the ReelFetch server you run. Facebook is contacted only with a configured Graph API token.' },
+  { icon: Link2, title: 'Universal platform support', text: 'Download from YouTube, Instagram, TikTok, Facebook, X, Reddit, Pinterest, and 1,000+ websites.' },
+  { icon: Smartphone, title: 'Mobile & desktop optimized', text: 'Clean, responsive design engineered for seamless use on iPhone, Android, tablets, and computers.' },
+  { icon: ListVideo, title: 'Full HD & merged audio', text: 'Automatically merges high-definition video and audio streams into standard, ready-to-watch MP4 files.' },
+  { icon: Timer, title: 'Lightning-fast processing', text: 'Direct stream engine delivers rapid link resolution and fast downloads with real-time progress.' },
+  { icon: Monitor, title: 'Zero installation needed', text: 'Runs 100% online in your favorite browser. No software, app downloads, or browser extensions required.' },
+  { icon: LockKeyhole, title: 'Privacy & security first', text: 'Your downloads remain confidential. No registration, no tracking, and temporary files are wiped immediately.' },
 ];
 
 export const devices: { icon: LucideIcon; title: string; text: string }[] = [

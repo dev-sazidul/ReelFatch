@@ -37,17 +37,25 @@ export interface AuthorizedVideoProvider {
 
 const apiBase = (process.env.NEXT_PUBLIC_API_BASE_URL ?? '').replace(/\/$/, '');
 
+const backendProvider = createBackendVideoProvider(apiBase);
+
 /**
- * Facebook lookup goes through the local API. The API calls Graph API only when a token is configured.
+ * Video lookup and downloading goes through the local API powered by yt-dlp.
  */
 export const authorizedVideoProviders: Partial<
   Record<PlatformId, AuthorizedVideoProvider>
 > = {
-  facebook: createBackendVideoProvider(apiBase),
+  facebook: backendProvider,
+  youtube: backendProvider,
+  tiktok: backendProvider,
+  instagram: backendProvider,
+  x: backendProvider,
+  pinterest: backendProvider,
+  reddit: backendProvider,
 };
 
-export function getAuthorizedVideoProvider(platformId: PlatformId) {
-  return authorizedVideoProviders[platformId] ?? null;
+export function getAuthorizedVideoProvider(platformId?: string) {
+  return backendProvider;
 }
 
 export class VideoLookupError extends Error {

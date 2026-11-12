@@ -13,6 +13,9 @@ def select_provider(raw_url: str, providers: list[VideoProvider]) -> tuple[Split
     for candidate in providers:
         if any(host_matches(hostname, domain) for domain in candidate.hosts):
             return url, candidate
+    for candidate in providers:
+        if getattr(candidate, 'universal', False):
+            return url, candidate
     raise ApiError(400, 'UNSUPPORTED_LINK', 'That link is not on a supported video platform.')
 
 

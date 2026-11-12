@@ -126,5 +126,5 @@ async function saveFile(response: Response, onProgress?: (progress: DownloadProg
 
 function filenameFrom(disposition: string | null) {
   const match = disposition?.match(/filename="([A-Za-z0-9._-]+)"/);
-  return match?.[1] || 'facebook-video.mp4';
+  return match?.[1] || 'video.mp4';
 }

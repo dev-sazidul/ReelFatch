@@ -70,7 +70,7 @@ export function useVideoLookup() {
     if (detection.kind === 'empty') {
       const detail = 'The link field was empty. No request was sent.';
       await reportLookup({ outcome: 'empty', detail });
-      setNotice({ kind: 'error', text: 'Paste a Facebook video or Reel link to continue.' });
+      setNotice({ kind: 'error', text: 'Paste a video or Reel link to get started.' });
       return;
     }
     if (detection.kind === 'invalid') {
@@ -79,21 +79,16 @@ export function useVideoLookup() {
       setNotice({ kind: 'error', text: 'Enter a complete link beginning with https:// or http://.' });
       return;
     }
-    if (detection.kind === 'unsupported' || detection.platform.id !== 'facebook') {
-      const detail = 'The host is not a facebook.com or fb.watch address. No request was sent.';
+    if (detection.kind === 'unsupported') {
+      const detail = 'The host is not on a supported video platform. No request was sent.';
       await reportLookup({ outcome: 'unsupported', url: submittedUrl, detail });
-      setNotice({ kind: 'error', text: 'That link is not a supported Facebook video or Reel address. Use a facebook.com or fb.watch link.' });
+      setNotice({ kind: 'error', text: 'That link is not on a supported video platform.' });
       return;
     }
 
-    const linkType = classifyFacebookLink(submittedUrl);
-    const linkLabel = facebookLinkLabel(linkType);
-    if (linkType === 'other') {
-      const detail = 'The Facebook address was recognized, but the path is not a Reel, Watch, or share link. No request was sent.';
-      await reportLookup({ outcome: 'unsupported', url: submittedUrl, linkType: linkLabel, detail });
-      setNotice({ kind: 'error', text: 'That Facebook link does not look like a Reel, Watch, or share video. Paste the video share link instead.' });
-      return;
-    }
+    const linkLabel = detection.platform.id === 'facebook'
+      ? facebookLinkLabel(classifyFacebookLink(submittedUrl))
+      : `${detection.platform.name} video`;
 
     const connected = getAuthorizedVideoProvider(detection.platform.id);
     if (!connected) {

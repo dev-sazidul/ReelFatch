@@ -12,6 +12,20 @@ router = APIRouter()
 @router.get('/api/health')
 async def health(request: Request) -> dict[str, Any]:
     config: AppConfig = request.app.state.config
+    if config.enable_yt_dlp:
+        return {
+            'status': 'ok',
+            'downloader': 'yt-dlp',
+            'providers': {
+                'facebook': {'mode': 'yt-dlp', 'configured': True},
+                'youtube': {'mode': 'yt-dlp', 'configured': True},
+                'tiktok': {'mode': 'yt-dlp', 'configured': True},
+                'instagram': {'mode': 'yt-dlp', 'configured': True},
+                'x': {'mode': 'yt-dlp', 'configured': True},
+                'reddit': {'mode': 'yt-dlp', 'configured': True},
+                'pinterest': {'mode': 'yt-dlp', 'configured': True},
+            },
+        }
     return {
         'status': 'ok',
         'providers': {

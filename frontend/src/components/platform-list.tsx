@@ -7,12 +7,12 @@ export function PlatformStatusBadge({ status }: { status: PlatformStatus }) {
 
 export function PlatformGrid() {
   return (
-    <section className="rf-section rf-section-tint" aria-labelledby="platforms-heading">
+    <section className="rf-section rf-section-tint" id="platforms" aria-labelledby="platforms-heading">
       <div className="rf-container">
         <div className="rf-section-heading">
-          <span className="rf-eyebrow">Platform directory</span>
-          <h2 id="platforms-heading">One place for video links.</h2>
-          <p>Platform recognition is separate from video access. Statuses show whether a real, authorized integration is connected.</p>
+          <span className="rf-eyebrow">Supported Platforms</span>
+          <h2 id="platforms-heading">One place to download from all major platforms.</h2>
+          <p>Easily grab videos, reels, and audio from the world’s most popular social platforms in full HD.</p>
         </div>
         <div className="rf-platform-grid">
           {platformRegistry.map(({ id, name, Icon }) => (
@@ -20,7 +20,7 @@ export function PlatformGrid() {
               <span className="rf-platform-card-icon" aria-hidden="true"><Icon size={21} /></span>
               <span className="rf-platform-card-title">{name}</span>
               <PlatformStatusBadge status={getPlatformStatus(id)} />
-              <span className="rf-platform-card-note">URL format only · no video lookup</span>
+              <span className="rf-platform-card-note">HD Video &amp; Audio · Ready</span>
             </Link>
           ))}
         </div>
@@ -37,7 +37,7 @@ export function DetectedPlatform({ name, Icon, status }: {
   return (
     <div className="rf-detected-platform" role="status" aria-live="polite">
       <span className="rf-platform-card-icon" aria-hidden="true"><Icon size={17} /></span>
-      <span><strong>{name} link format detected</strong><small>Format recognition only; no video data was fetched.</small></span>
+      <span><strong>{name} link detected</strong><small>Ready to fetch available download options.</small></span>
       <PlatformStatusBadge status={status} />
     </div>
   );

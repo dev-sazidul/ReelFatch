@@ -32,6 +32,8 @@ class ProviderLookup:
     title: str | None = None
     description: str | None = None
     thumbnail_url: str | None = None
+    webpage_url: str | None = None
+    duration_seconds: float | None = None
 
 
 class VideoProvider(Protocol):

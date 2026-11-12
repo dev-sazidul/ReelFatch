@@ -7,10 +7,10 @@ Browser -> Next.js App Router (5173 dev / 4173 production)
 Next.js rewrites -> FastAPI / Uvicorn (127.0.0.1:3000)
   app/videos/router.py -> VideosService
     Provider registry
-      FacebookVideoProvider -> public HTTPS HEAD redirect -> Graph API
-      YouTube / TikTok / Instagram -> PROVIDER_NOT_CONFIGURED
+      YtDlpVideoProvider -> yt-dlp metadata extraction & video downloader
+      FacebookVideoProvider (fallback when Meta access token is configured)
     LookupStore / DownloadJobStore (memory, TTL)
-  GET /api/videos/downloads/{job_id}/file -> allowed CDN stream
+  GET /api/videos/downloads/{job_id}/file -> streamed media file
 ```
 
 ## Frontend
