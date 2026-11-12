@@ -30,6 +30,7 @@ class AppConfig:
     rate_limit_ttl_ms: int = 60_000
     rate_limit_limit: int = 60
     lookup_ttl_ms: int = 600_000
+    enable_yt_dlp: bool = True
 
 
 def load_env_file(path: Path = ENV_FILE) -> None:
@@ -69,6 +70,9 @@ def load_config(env: Mapping[str, str]) -> AppConfig:
     cors_raw = _trimmed(env, 'CORS_ORIGIN') or DEFAULT_CORS_ORIGINS
     cors_origins = tuple(origin.strip() for origin in cors_raw.split(',') if origin.strip())
 
+    enable_yt_dlp_raw = _trimmed(env, 'ENABLE_YT_DLP').lower()
+    enable_yt_dlp = enable_yt_dlp_raw not in ('false', '0', 'no', 'off')
+
     return AppConfig(
         port=_integer(env, 'PORT', 3000),
         host=_trimmed(env, 'HOST') or '127.0.0.1',
@@ -82,4 +86,5 @@ def load_config(env: Mapping[str, str]) -> AppConfig:
         rate_limit_ttl_ms=_integer(env, 'RATE_LIMIT_TTL_MS', 60_000),
         rate_limit_limit=_integer(env, 'RATE_LIMIT_LIMIT', 60),
         lookup_ttl_ms=_integer(env, 'LOOKUP_TTL_MS', 600_000),
+        enable_yt_dlp=enable_yt_dlp,
     )

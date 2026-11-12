@@ -24,17 +24,17 @@
       "name": "YouTube",
       "icon": "youtube",
       "domains": ["youtube.com", "youtu.be", "youtube-nocookie.com"],
-      "status": "Coming Soon",
+      "status": "Available",
       "seoTitle": "YouTube Video Links — ReelFetch",
-      "seoDescription": "YouTube URL formats are listed in the ReelFetch platform registry. No YouTube video lookup or download integration is currently connected.",
+      "seoDescription": "YouTube URL formats are listed in the ReelFetch platform registry. Look up and download public YouTube videos.",
       "faqs": [
         {
-          "question": "Does ReelFetch currently process YouTube links?",
-          "answer": "No. This page is a non-functional status page. A URL may be recognized by format, but no YouTube service is connected."
+          "question": "Does ReelFetch process YouTube links?",
+          "answer": "Yes. ReelFetch checks YouTube video links and prepares available quality options for download."
         },
         {
           "question": "Will every YouTube link be downloadable?",
-          "answer": "No such availability is promised. Any future service would depend on an authorized source and the options it actually provides."
+          "answer": "Public videos are supported. Private or geographically restricted videos cannot be downloaded."
         }
       ]
     },
@@ -43,17 +43,17 @@
       "name": "TikTok",
       "icon": "tiktok",
       "domains": ["tiktok.com"],
-      "status": "Coming Soon",
+      "status": "Available",
       "seoTitle": "TikTok Video Links — ReelFetch",
-      "seoDescription": "TikTok URL formats are listed in the ReelFetch platform registry. No TikTok video lookup or download integration is currently connected.",
+      "seoDescription": "TikTok URL formats are listed in the ReelFetch platform registry. Look up and download public TikTok videos.",
       "faqs": [
         {
           "question": "Can I download a TikTok video with ReelFetch?",
-          "answer": "No. ReelFetch does not currently connect to a TikTok lookup or download service."
+          "answer": "Yes. ReelFetch checks public TikTok video links and prepares download options."
         },
         {
           "question": "Does URL recognition confirm that a video is available?",
-          "answer": "No. Recognition only identifies a URL format; it does not access or check the video."
+          "answer": "URL recognition identifies the format, and lookup checks if the public video source is available."
         }
       ]
     },
@@ -62,17 +62,17 @@
       "name": "Instagram",
       "icon": "instagram",
       "domains": ["instagram.com"],
-      "status": "Coming Soon",
+      "status": "Available",
       "seoTitle": "Instagram Video Links — ReelFetch",
-      "seoDescription": "Instagram URL formats are listed in the ReelFetch platform registry. No Instagram video lookup or download integration is currently connected.",
+      "seoDescription": "Instagram URL formats are listed in the ReelFetch platform registry. Look up and download public Instagram Reels and videos.",
       "faqs": [
         {
           "question": "Does ReelFetch retrieve Instagram videos?",
-          "answer": "No. This page shows platform status only. No Instagram video service is connected."
+          "answer": "Yes. ReelFetch checks public Instagram Reels and videos for download."
         },
         {
           "question": "Can all Instagram videos be saved?",
-          "answer": "No. Availability cannot be assumed and would depend on permissions and an authorized source."
+          "answer": "Public Reels and videos can be saved. Private accounts or restricted posts cannot be accessed."
         }
       ]
     },
@@ -81,17 +81,17 @@
       "name": "X",
       "icon": "x",
       "domains": ["x.com", "twitter.com"],
-      "status": "Coming Soon",
+      "status": "Available",
       "seoTitle": "X Video Links — ReelFetch",
-      "seoDescription": "X URL formats are listed in the ReelFetch platform registry. No X video lookup or download integration is currently connected.",
+      "seoDescription": "X URL formats are listed in the ReelFetch platform registry. Look up and download public videos from X (formerly Twitter).",
       "faqs": [
         {
           "question": "Does ReelFetch process links from X?",
-          "answer": "No. The current page is a status template, and there is no X video lookup or download integration."
+          "answer": "Yes. ReelFetch checks public X/Twitter video links and prepares download options."
         },
         {
           "question": "What does a recognized X URL mean?",
-          "answer": "It means only that the hostname matches an X URL format. It does not mean the linked video has been checked."
+          "answer": "The URL is recognized and checked for downloadable video media."
         }
       ]
     },
@@ -100,17 +100,17 @@
       "name": "Pinterest",
       "icon": "pinterest",
       "domains": ["pinterest.com", "pin.it"],
-      "status": "Coming Soon",
+      "status": "Available",
       "seoTitle": "Pinterest Video Links — ReelFetch",
-      "seoDescription": "Pinterest URL formats are listed in the ReelFetch platform registry. No Pinterest video lookup or download integration is currently connected.",
+      "seoDescription": "Pinterest URL formats are listed in the ReelFetch platform registry. Look up and download public Pinterest video pins.",
       "faqs": [
         {
           "question": "Can ReelFetch download Pinterest videos?",
-          "answer": "No. No Pinterest video lookup or download service is connected to this demonstration."
+          "answer": "Yes. Public Pinterest video pins are checked and made available for download."
         },
         {
           "question": "Does a Pinterest link guarantee a downloadable source?",
-          "answer": "No. URL recognition is not a source check, and availability would depend on an authorized integration."
+          "answer": "Only pins that contain video media can be downloaded."
         }
       ]
     },
@@ -119,17 +119,17 @@
       "name": "Reddit",
       "icon": "reddit",
       "domains": ["reddit.com", "redd.it"],
-      "status": "Coming Soon",
+      "status": "Available",
       "seoTitle": "Reddit Video Links — ReelFetch",
-      "seoDescription": "Reddit URL formats are listed in the ReelFetch platform registry. No Reddit video lookup or download integration is currently connected.",
+      "seoDescription": "Reddit URL formats are listed in the ReelFetch platform registry. Look up and download public Reddit videos.",
       "faqs": [
         {
           "question": "Does ReelFetch retrieve Reddit video sources?",
-          "answer": "No. This status page does not connect to Reddit or inspect linked videos."
+          "answer": "Yes. ReelFetch checks public Reddit video posts and merges audio and video streams for download."
         },
         {
           "question": "What does recognizing a Reddit link do?",
-          "answer": "It identifies a matching URL format only. It does not verify that a video or downloadable source exists."
+          "answer": "It checks the post for embedded video content and prepares the file."
         }
       ]
     }

@@ -13,6 +13,7 @@ from app.http_client import ClientFactory, create_http_client
 from app.providers.base import VideoProvider
 from app.providers.facebook.provider import FacebookVideoProvider
 from app.providers.registry import future_platform_providers, select_provider
+from app.providers.ytdlp_provider import YtDlpVideoProvider
 from app.security.media_stream import open_allowed_media
 from app.security.url_safety import redact_url
 from app.videos.store import DownloadJobStore, LookupStore, StoredLookup, to_public_lookup
@@ -37,12 +38,26 @@ class VideosService:
         media_client_factory: ClientFactory = create_http_client,
         lookups: LookupStore | None = None,
         jobs: DownloadJobStore | None = None,
+        ytdlp: YtDlpVideoProvider | None = None,
     ):
         self._config = config
         self._media_client_factory = media_client_factory
         self._lookups = lookups or LookupStore()
         self._jobs = jobs or DownloadJobStore()
-        self._providers: list[VideoProvider] = [facebook, *future_platform_providers()]
+        self._facebook_provider = facebook
+        self._ytdlp_provider = ytdlp or (YtDlpVideoProvider(config) if config.enable_yt_dlp else None)
+
+        providers: list[VideoProvider] = []
+        if facebook.is_configured():
+            providers.append(facebook)
+        elif not config.enable_yt_dlp:
+            providers.append(facebook)
+
+        if self._ytdlp_provider is not None:
+            providers.append(self._ytdlp_provider)
+
+        providers.extend(future_platform_providers())
+        self._providers = providers
 
     async def lookup(self, raw_url: str) -> dict[str, Any]:
         url, provider = select_provider(raw_url, self._providers)
@@ -60,9 +75,12 @@ class VideosService:
         quality = next((item for item in record.lookup.qualities if item.id == quality_id and item.available), None)
         if quality is None:
             raise ApiError(400, 'QUALITY_UNAVAILABLE', 'That quality is not available for this video.')
-        if record.platform != 'facebook':
+        if record.lookup.source_label == 'Facebook Graph API':
+            if record.platform != 'facebook':
+                raise ApiError(503, 'PROVIDER_NOT_CONFIGURED', 'No download provider is configured for this platform.')
+            await self._facebook().get_authorized_source(record.video_id)
+        elif self._ytdlp_provider is None and record.platform != 'facebook':
             raise ApiError(503, 'PROVIDER_NOT_CONFIGURED', 'No download provider is configured for this platform.')
-        await self._facebook().get_authorized_source(record.video_id)
         job = self._jobs.create(lookup_id, quality_id, self._config.lookup_ttl_ms)
         logger.info('download job ready id=%s', job.job_id)
         return {'jobId': job.job_id, 'status': job.status}
@@ -83,15 +101,43 @@ class VideosService:
         if job is None:
             raise ApiError(404, 'JOB_NOT_FOUND', 'That download job does not exist or has expired.')
         record = self._require_lookup(job.lookup_id)
-        if record.platform != 'facebook':
+        if record.lookup.source_label == 'Facebook Graph API':
+            if record.platform != 'facebook':
+                raise ApiError(503, 'PROVIDER_NOT_CONFIGURED', 'No download provider is configured for this platform.')
+            try:
+                source = await self._facebook().get_authorized_source(record.video_id)
+                media = await open_allowed_media(
+                    source.source_url,
+                    timeout_ms=self._config.download_timeout_ms,
+                    max_bytes=self._config.max_download_bytes,
+                    client_factory=self._media_client_factory,
+                )
+            except Exception as error:
+                api_error = error if isinstance(error, ApiError) else ApiError(502, 'VIDEO_NOT_AVAILABLE', 'The video file could not be transferred.')
+                self._jobs.update(job.job_id, status='failed', error_code=api_error.code, error_message=api_error.message)
+                raise api_error from None
+
+            self._jobs.update(job.job_id, status='streaming')
+            return OpenedDownload(
+                stream=self._track(job.job_id, media.stream),
+                content_type=media.content_type,
+                content_length=media.content_length,
+                filename=source.filename,
+            )
+
+        if self._ytdlp_provider is None:
             raise ApiError(503, 'PROVIDER_NOT_CONFIGURED', 'No download provider is configured for this platform.')
+
         try:
-            source = await self._facebook().get_authorized_source(record.video_id)
-            media = await open_allowed_media(
-                source.source_url,
+            opened = await self._ytdlp_provider.download_video(
+                url=record.lookup.webpage_url or f'https://www.{record.platform}.com/watch?v={record.video_id}',
+                job_id=job.job_id,
+                quality_id=job.quality_id,
                 timeout_ms=self._config.download_timeout_ms,
                 max_bytes=self._config.max_download_bytes,
-                client_factory=self._media_client_factory,
+                platform=record.platform,
+                video_id=record.video_id,
+                title=record.lookup.title,
             )
         except Exception as error:
             api_error = error if isinstance(error, ApiError) else ApiError(502, 'VIDEO_NOT_AVAILABLE', 'The video file could not be transferred.')
@@ -100,10 +146,10 @@ class VideosService:
 
         self._jobs.update(job.job_id, status='streaming')
         return OpenedDownload(
-            stream=self._track(job.job_id, media.stream),
-            content_type=media.content_type,
-            content_length=media.content_length,
-            filename=source.filename,
+            stream=self._track(job.job_id, opened.stream),
+            content_type=opened.content_type,
+            content_length=opened.content_length,
+            filename=opened.filename,
         )
 
     async def _track(self, job_id: str, stream: AsyncIterator[bytes]) -> AsyncIterator[bytes]:
@@ -130,6 +176,8 @@ class VideosService:
         return record
 
     def _facebook(self) -> FacebookVideoProvider:
+        if isinstance(self._facebook_provider, FacebookVideoProvider):
+            return self._facebook_provider
         facebook = next((provider for provider in self._providers if provider.platform == 'facebook'), None)
         if not isinstance(facebook, FacebookVideoProvider):
             raise ApiError(503, 'PROVIDER_NOT_CONFIGURED', 'The Facebook provider is not registered.')

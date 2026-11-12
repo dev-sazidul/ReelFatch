@@ -79,11 +79,31 @@ export function detectPlatformUrl(rawUrl: string):
     }
 
     const hostname = url.hostname.toLowerCase().replace(/^www\./, '').replace(/\.$/, '');
-    const platform = platformRegistry.find(({ domains }) =>
+    const matched = platformRegistry.find(({ domains }) =>
       domains.some((domain) => hostname === domain || hostname.endsWith(`.${domain}`)),
     );
 
-    return platform ? { kind: 'recognized', platform } : { kind: 'unsupported' };
+    if (matched) {
+      return { kind: 'recognized', platform: matched };
+    }
+
+    const hostParts = hostname.split('.');
+    const baseName = hostParts.length >= 2 ? hostParts[hostParts.length - 2] : 'video';
+    const capitalized = baseName.charAt(0).toUpperCase() + baseName.slice(1);
+
+    const genericPlatform: Platform = {
+      id: baseName as any,
+      name: capitalized,
+      icon: 'facebook',
+      domains: [hostname],
+      status: 'Available',
+      seoTitle: `${capitalized} Video Downloader — ReelFetch`,
+      seoDescription: `Download ${capitalized} videos in high quality with ReelFetch.`,
+      faqs: [],
+      Icon: SiYoutube,
+    };
+
+    return { kind: 'recognized', platform: genericPlatform };
   } catch {
     return { kind: 'invalid' };
   }

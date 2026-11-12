@@ -6,12 +6,11 @@ The Next.js frontend lives in `frontend/`. The FastAPI service lives in `backend
 
 ## What works today
 
-- URL validation for Facebook, YouTube, TikTok, and Instagram hosts.
-- Numeric Facebook watch, reel, and `/videos/{id}` links can be sent to Graph API `v26.0`.
-- When a Page or user access token is configured, the API requests `id`, `name`, `description`, `picture`, `source`, and `format`.
-- The `source` field is the raw video file URL documented by Meta. The API downloads it only from `https` hosts ending in `.fbcdn.net` or `.fbsbx.com`, then streams it to the browser.
-- Health, lookup, metadata, download-job, and file endpoints are available.
-- Missing credentials return `PROVIDER_NOT_CONFIGURED`. No Facebook request is made in that case for links that already contain a numeric id.
+- Video downloading and metadata lookup powered by `yt-dlp` for Facebook, YouTube, TikTok, Instagram, X/Twitter, Reddit, and Pinterest.
+- Merges audio and video streams into clean MP4 files with accurate size headers and download progress.
+- Fallback support for Facebook Graph API `v26.0` when a Page or user access token is explicitly configured.
+- URL validation and host verification for all supported video platforms.
+- Health, lookup, metadata, download-job, and streaming file endpoints are available.
 
 ## What does not work without more access
 

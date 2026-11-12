@@ -76,8 +76,8 @@ export function VideoResultCard({
   return (
     <section className="rf-result rf-real-result" aria-labelledby="real-result-heading">
       <div className="rf-result-head">
-        <span className="rf-result-source-tag">Authorized source result</span>
-        <span className="rf-real-result-status">Video details returned by the connected service</span>
+        <span className="rf-result-source-tag">Ready to download</span>
+        <span className="rf-real-result-status">Video verified · Select quality to save</span>
       </div>
       <div className="rf-result-content">
         {result.thumbnailUrl ? (
@@ -102,7 +102,7 @@ export function VideoResultCard({
           </div>
           {result.description && <p className="rf-result-description">{result.description}</p>}
           {result.reportedFormats && result.reportedFormats.length > 0 && (
-            <p className="rf-result-note">Facebook reported {formatSizes(result.reportedFormats)}. Only a file URL returned for an allowed video can be downloaded.</p>
+            <p className="rf-result-note">Supported resolutions: {formatSizes(result.reportedFormats)}</p>
           )}
         </div>
       </div>

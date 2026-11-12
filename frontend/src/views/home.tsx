@@ -7,6 +7,7 @@ import { FeatureGrid } from '@/components/feature-grid';
 import { HowItWorks } from '@/components/how-it-works';
 import { InterfacePreview } from '@/components/interface-preview';
 import { SupportedDevices } from '@/components/supported-devices';
+import { PlatformGrid } from '@/components/platform-list';
 import { VideoResultCard } from '@/components/video-result-card';
 import { VideoUrlForm } from '@/components/video-url-form';
 import { homeFaq } from '@/content/site';
@@ -17,9 +18,9 @@ export function HeroSection() {
   return (
     <section className="rf-hero" id="tool">
       <div className="rf-container rf-hero-inner">
-        <p className="rf-eyebrow">Independent tool · Not a Meta product</p>
-        <h1>Download Facebook Reels &amp; Videos Easily</h1>
-        <p className="rf-lead">Paste a video link to check available download options in a simple, mobile-friendly interface.</p>
+        <p className="rf-eyebrow">Universal Video Downloader</p>
+        <h1>Download Videos &amp; Reels from Any Platform</h1>
+        <p className="rf-lead">Save high-definition videos, reels, and shorts from Facebook, Instagram, YouTube, TikTok, X, and more. Fast, free, and in full HD.</p>
         <VideoUrlForm
           url={lookup.url}
           notice={lookup.notice}
@@ -40,6 +41,7 @@ export default function HomePage() {
   return (
     <>
       <HeroSection />
+      <PlatformGrid />
       <HowItWorks />
       <FeatureGrid />
       <SupportedDevices />

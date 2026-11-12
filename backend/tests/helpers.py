@@ -21,6 +21,7 @@ BASE_CONFIG = AppConfig(
     rate_limit_ttl_ms=60_000,
     rate_limit_limit=10,
     lookup_ttl_ms=60_000,
+    enable_yt_dlp=False,
 )
 
 

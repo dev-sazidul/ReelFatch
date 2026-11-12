@@ -16,7 +16,7 @@ export function VideoUrlForm({ url, notice, isLoading, onUrlChange, onPaste, onC
   const invalid = notice.kind === 'error';
   return (
     <form className="rf-tool-card" onSubmit={onSubmit} noValidate>
-      <label className="rf-url-label" htmlFor="reel-url">Facebook video or Reel link</label>
+      <label className="rf-url-label" htmlFor="reel-url">Video or Reel link</label>
       <div className="rf-input-wrap">
         <div className="rf-field">
           <input
@@ -26,7 +26,7 @@ export function VideoUrlForm({ url, notice, isLoading, onUrlChange, onPaste, onC
             inputMode="url"
             autoComplete="off"
             spellCheck={false}
-            placeholder="Paste your Facebook video or Reel link here"
+            placeholder="Paste any video or reel link here (Facebook, Instagram, YouTube, TikTok...)"
             value={url}
             onChange={(event) => onUrlChange(event.target.value)}
             aria-invalid={invalid}
@@ -47,10 +47,10 @@ export function VideoUrlForm({ url, notice, isLoading, onUrlChange, onPaste, onC
           {!isLoading && <ArrowRight size={16} aria-hidden="true" />}
         </button>
       </div>
-      <p className="rf-format-hint" id="url-hint">Watch, Reel, share, and fb.watch links are accepted. A file is offered only when a download URL is actually returned.</p>
+      <p className="rf-format-hint" id="url-hint">Supports Facebook Reels, Instagram Reels &amp; Stories, YouTube Videos &amp; Shorts, TikTok clips, and more in HD.</p>
       <p className="rf-privacy" id="url-privacy">
         <LockKeyhole size={14} aria-hidden="true" />
-        The link is sent to your ReelFetch server. Facebook is contacted only when a Graph API token is configured.
+        Fast &amp; secure download. Free, unlimited, and no personal account needed.
       </p>
       <DownloadStatus notice={notice} />
     </form>

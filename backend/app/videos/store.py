@@ -116,6 +116,8 @@ def to_public_lookup(record: StoredLookup) -> dict[str, Any]:
         data['description'] = lookup.description
     if lookup.thumbnail_url is not None:
         data['thumbnailUrl'] = lookup.thumbnail_url
+    if getattr(lookup, 'duration_seconds', None) is not None:
+        data['durationSeconds'] = lookup.duration_seconds
     data['sourceLabel'] = lookup.source_label
     data['qualities'] = [quality.to_json() for quality in lookup.qualities]
     data['reportedFormats'] = lookup.reported_formats

@@ -5,9 +5,9 @@ import { DownloadStatus, type Notice } from '@/components/download-status';
 import { QualitySelector } from '@/components/quality-selector';
 
 const previewNotices: Record<string, Notice> = {
-  empty: { kind: 'error', text: 'Paste a Facebook video or Reel link to continue.' },
+  empty: { kind: 'error', text: 'Paste a video or Reel link to get started.' },
   invalid: { kind: 'error', text: 'Enter a complete link beginning with https:// or http://.' },
-  unsupported: { kind: 'error', text: 'That link is not a supported Facebook video or Reel address. Use a facebook.com or fb.watch link.' },
+  unsupported: { kind: 'error', text: 'That link is not on a supported video platform.' },
   loading: { kind: 'loading', text: 'Checking this link for available download options…' },
   found: { kind: 'success', text: 'Sample layout only. These details were not returned for a real link.' },
   'empty-source': { kind: 'warning', text: "We couldn't find a downloadable video source. Please check the link or try another supported video." },
