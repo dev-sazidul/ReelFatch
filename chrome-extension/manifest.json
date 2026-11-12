@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "ReelFetch Video Downloader",
+  "version": "1.0.0",
+  "description": "Detect a public video page and send its link to ReelFetch. The website checks the link. A file is saved only after you choose one.",
+  "action": {
+    "default_title": "ReelFetch Video Downloader",
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "permissions": ["activeTab", "contextMenus", "storage"]
+}
