@@ -17,6 +17,8 @@ const nextConfig: NextConfig = {
     // Next.js cuts proxied requests off after 30 seconds of silence by default. The API applies
     // its own timeouts (12 s per Facebook call, 120 s per download), so this is only a backstop.
     proxyTimeout: 300_000,
+    staticGenerationMaxConcurrency: 1,
+    staticGenerationRetryCount: 3,
   },
 };
 

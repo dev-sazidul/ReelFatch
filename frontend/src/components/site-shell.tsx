@@ -5,17 +5,20 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ArrowDownToLine, Menu, X } from 'lucide-react';
 import { brand } from '@/config/brand';
+import { FutureSolutionBadge, FooterEcosystem } from '@/components/ecosystem-tools';
 
 const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/#platforms', label: 'Platforms' },
   { href: '/#how-it-works', label: 'How It Works' },
+  { href: '/blog', label: 'Blog' },
   { href: '/#faq', label: 'FAQ' },
   { href: '/about', label: 'About' },
 ];
 
 const footerLinks = [
   { href: '/about', label: 'About Us' },
+  { href: '/blog', label: 'Blog' },
   { href: '/contact', label: 'Contact' },
   { href: '/privacy', label: 'Privacy Policy' },
   { href: '/terms', label: 'Terms of Service' },
@@ -86,7 +89,10 @@ export function SiteShell({ children }: { children: ReactNode }) {
         <div className="rf-container">
           <div className="rf-footer-top">
             <div>
-              <BrandLink testId="link-footer-brand" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
+                <BrandLink testId="link-footer-brand" />
+                <FutureSolutionBadge />
+              </div>
               <p className="rf-footer-note">{brand.name} is a high-speed universal video and reel downloader built for fast, clean, personal offline viewing across all modern devices.</p>
             </div>
             <nav className="rf-footer-links" aria-label="Footer">
@@ -95,8 +101,11 @@ export function SiteShell({ children }: { children: ReactNode }) {
               ))}
             </nav>
           </div>
+
+          <FooterEcosystem />
+
           <div className="rf-footer-bottom">
-            <span>© {new Date().getFullYear()} {brand.name}</span>
+            <span>© {new Date().getFullYear()} {brand.name} — A Product of <a href="https://futuresolutionai.com" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', color: 'inherit' }}>FutureSolutionAI</a></span>
             <span>Download only what you have permission to save.</span>
           </div>
         </div>

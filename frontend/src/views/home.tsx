@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import { EcosystemSection } from '@/components/ecosystem-tools';
 import { FaqAccordion } from '@/components/faq-accordion';
 import { FeatureGrid } from '@/components/feature-grid';
 import { HowItWorks } from '@/components/how-it-works';
@@ -41,6 +42,7 @@ export default function HomePage() {
   return (
     <>
       <HeroSection />
+      <EcosystemSection />
       <PlatformGrid />
       <HowItWorks />
       <FeatureGrid />

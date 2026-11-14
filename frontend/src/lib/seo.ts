@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import { DEFAULT_SITE_URL } from '@/config/brand';
+import { getBlogPostBySlug } from '@/data/blogs';
 import { getPlatformById, getPlatformStatus } from '@/data/platforms';
 import { getAuthorizedVideoProvider } from '@/services/platform-integrations';
 
@@ -44,10 +46,28 @@ const staticPageMetadata: Record<string, PageMetadata> = {
     description: 'ReelFetch copyright, DMCA, and content takedown policy.',
     robots: 'index,follow',
   },
+  '/blog': {
+    title: 'Creator & Video Production Blog — ReelFetch',
+    description: 'Expert guides, video optimization strategies, cross-platform media archiving, and creator workflows for high-quality video production.',
+    robots: 'index,follow',
+  },
 };
 
 export function getPageMetadata(pathname: string): PageMetadata {
   const path = pathname.replace(/\/+$/, '') || '/';
+  const blogMatch = path.match(/^\/blog\/([^/]+)$/);
+  if (blogMatch) {
+    const post = getBlogPostBySlug(blogMatch[1]);
+    if (!post) {
+      return { title: 'Blog Post Not Found — ReelFetch', description: 'This ReelFetch blog article could not be found.', robots: 'noindex,follow' };
+    }
+    return {
+      title: `${post.title} — ReelFetch`,
+      description: post.metaDescription || post.excerpt,
+      robots: 'index,follow',
+    };
+  }
+
   const platformMatch = path.match(/^\/platform\/([^/]+)$/);
   if (platformMatch) {
     const platform = getPlatformById(platformMatch[1]);
@@ -88,24 +108,17 @@ export async function buildMetadata(pathname: string): Promise<Metadata> {
 }
 
 function configuredOrigin() {
-  const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL;
-  if (!configuredSiteUrl) return null;
+  const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || DEFAULT_SITE_URL;
   try {
     const url = new URL(configuredSiteUrl);
-    return url.protocol === 'https:' || url.protocol === 'http:' ? url.origin : null;
+    return url.protocol === 'https:' || url.protocol === 'http:' ? url.origin : DEFAULT_SITE_URL;
   } catch {
-    return null;
+    return DEFAULT_SITE_URL;
   }
 }
 
 async function canonicalUrl(pathname: string) {
   const cleanPath = pathname.split(/[?#]/, 1)[0].replace(/\/+$/, '') || '/';
-  // Without NEXT_PUBLIC_SITE_URL, use the host the page was requested on, as the browser did.
-  let origin = configuredOrigin();
-  if (!origin) {
-    const { headers } = await import('next/headers');
-    const host = (await headers()).get('host') || 'localhost';
-    origin = `http://${host}`;
-  }
+  const origin = configuredOrigin() || DEFAULT_SITE_URL;
   return new URL(cleanPath, `${origin}/`).href;
 }

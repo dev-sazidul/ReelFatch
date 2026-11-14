@@ -2,6 +2,7 @@ import type { CSSProperties, ReactNode } from 'react';
 import type { Metadata, Viewport } from 'next';
 import { Providers } from '@/app/providers';
 import { brand } from '@/config/brand';
+import { getWebsiteJsonLd } from '@/lib/structured-data';
 import '@/index.css';
 
 export const metadata: Metadata = {
@@ -26,6 +27,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(getWebsiteJsonLd()) }}
+        />
       </head>
       <body>
         <Providers>{children}</Providers>
