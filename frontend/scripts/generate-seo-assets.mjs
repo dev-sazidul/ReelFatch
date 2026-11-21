@@ -25,14 +25,16 @@ try {
 const DEFAULT_ORIGIN = 'https://bestdownloader.site';
 
 function getSiteOrigin() {
-  const configured = process.env.NEXT_PUBLIC_SITE_URL || DEFAULT_ORIGIN;
-  try {
-    const url = new URL(configured);
-    if (url.protocol !== 'https:' && url.protocol !== 'http:') return DEFAULT_ORIGIN;
-    return url.origin;
-  } catch {
-    return DEFAULT_ORIGIN;
+  const configured = process.env.NEXT_PUBLIC_SITE_URL;
+  if (configured) {
+    try {
+      const url = new URL(configured);
+      if (url.protocol === 'https:' || url.protocol === 'http:') return url.origin;
+    } catch {
+      /* Fall back to the public site when the env value is not a valid origin. */
+    }
   }
+  return DEFAULT_ORIGIN;
 }
 
 function escapeXml(value) {
@@ -45,7 +47,7 @@ const publicRoutes = [
   { path: '/blog', priority: '0.8', changefreq: 'weekly' },
   { path: '/about', priority: '0.6', changefreq: 'monthly' },
   { path: '/faq', priority: '0.8', changefreq: 'monthly' },
-  { path: '/contact', priority: '0.5', changefreq: 'monthly' },
+  { path: '/contact', priority: '0.4', changefreq: 'yearly' },
   { path: '/privacy', priority: '0.3', changefreq: 'yearly' },
   { path: '/terms', priority: '0.3', changefreq: 'yearly' },
   { path: '/copyright', priority: '0.3', changefreq: 'yearly' },
@@ -58,7 +60,7 @@ const publicRoutes = [
 const sitemapUrls = publicRoutes
   .map(
     ({ path: route, priority, changefreq }) => `  <url>
-    <loc>${escapeXml(new URL(route, `${origin}/`).href)}</loc>
+    <loc>${escapeXml(route === '/' ? origin : new URL(route, `${origin}/`).href)}</loc>
     <changefreq>${changefreq}</changefreq>
     <priority>${priority}</priority>
   </url>`,
@@ -73,6 +75,7 @@ ${sitemapUrls}
 
 const robots = `User-agent: *
 Allow: /
+Disallow: /api/
 Sitemap: ${origin}/sitemap.xml
 `;
 

@@ -4,6 +4,7 @@ import { useState, type ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from '@/components/error-boundary';
+import { PwaProvider } from '@/components/pwa/pwa-provider';
 import { SiteShell } from '@/components/site-shell';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -17,7 +18,9 @@ export function Providers({ children }: { children: ReactNode }) {
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <ErrorBoundary resetKey={pathname}>
-            <SiteShell>{children}</SiteShell>
+            <PwaProvider>
+              <SiteShell>{children}</SiteShell>
+            </PwaProvider>
           </ErrorBoundary>
           <Toaster />
         </TooltipProvider>
