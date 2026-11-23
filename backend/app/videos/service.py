@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import logging
 import re
 from collections.abc import AsyncIterator
@@ -15,7 +16,7 @@ from app.providers.facebook.provider import FacebookVideoProvider
 from app.providers.registry import future_platform_providers, select_provider
 from app.providers.ytdlp_provider import YtDlpVideoProvider
 from app.security.media_stream import open_allowed_media
-from app.security.url_safety import redact_url
+from app.security.url_safety import ensure_public_dns_host, redact_url, url_host
 from app.videos.store import DownloadJobStore, LookupStore, StoredLookup, to_public_lookup
 
 logger = logging.getLogger('VideosService')
@@ -44,6 +45,7 @@ class VideosService:
         self._media_client_factory = media_client_factory
         self._lookups = lookups or LookupStore()
         self._jobs = jobs or DownloadJobStore()
+        self._job_locks: dict[str, asyncio.Lock] = {}
         self._facebook_provider = facebook
         self._ytdlp_provider = ytdlp or (YtDlpVideoProvider(config) if config.enable_yt_dlp else None)
 
@@ -61,6 +63,7 @@ class VideosService:
 
     async def lookup(self, raw_url: str) -> dict[str, Any]:
         url, provider = select_provider(raw_url, self._providers)
+        await ensure_public_dns_host(url_host(url), url.port or (443 if url.scheme.lower() == 'https' else 80))
         logger.info('lookup start platform=%s url=%s', provider.platform, redact_url(urlunsplit(url)))
         result = await provider.lookup(url)
         stored = self._lookups.save(result, self._config.lookup_ttl_ms)
@@ -97,60 +100,68 @@ class VideosService:
         return data
 
     async def open_download(self, job_id: str) -> OpenedDownload:
-        job = self._jobs.get(job_id)
-        if job is None:
-            raise ApiError(404, 'JOB_NOT_FOUND', 'That download job does not exist or has expired.')
-        record = self._require_lookup(job.lookup_id)
-        if record.lookup.source_label == 'Facebook Graph API':
-            if record.platform != 'facebook':
+        lock = self._job_locks.setdefault(job_id, asyncio.Lock())
+        async with lock:
+            job = self._jobs.get(job_id)
+            if job is None:
+                self._job_locks.pop(job_id, None)
+                raise ApiError(404, 'JOB_NOT_FOUND', 'That download job does not exist or has expired.')
+            if job.status == 'streaming':
+                raise ApiError(409, 'DOWNLOAD_IN_PROGRESS', 'This download is already streaming.')
+            if job.status == 'completed':
+                raise ApiError(410, 'DOWNLOAD_COMPLETED', 'This download link has already been used. Request a new download.')
+            record = self._require_lookup(job.lookup_id)
+            self._jobs.update(job.job_id, status='streaming')
+            if record.lookup.source_label == 'Facebook Graph API':
+                if record.platform != 'facebook':
+                    self._jobs.update(job.job_id, status='failed', error_code='PROVIDER_NOT_CONFIGURED')
+                    raise ApiError(503, 'PROVIDER_NOT_CONFIGURED', 'No download provider is configured for this platform.')
+                try:
+                    source = await self._facebook().get_authorized_source(record.video_id)
+                    media = await open_allowed_media(
+                        source.source_url,
+                        timeout_ms=self._config.download_timeout_ms,
+                        max_bytes=self._config.max_download_bytes,
+                        client_factory=self._media_client_factory,
+                    )
+                except Exception as error:
+                    api_error = error if isinstance(error, ApiError) else ApiError(503, 'VIDEO_NOT_AVAILABLE', 'The video file could not be transferred.')
+                    self._jobs.update(job.job_id, status='failed', error_code=api_error.code, error_message=api_error.message)
+                    raise api_error from None
+
+                return OpenedDownload(
+                    stream=self._track(job.job_id, media.stream),
+                    content_type=media.content_type,
+                    content_length=media.content_length,
+                    filename=source.filename,
+                )
+
+            if self._ytdlp_provider is None:
+                self._jobs.update(job.job_id, status='failed', error_code='PROVIDER_NOT_CONFIGURED')
                 raise ApiError(503, 'PROVIDER_NOT_CONFIGURED', 'No download provider is configured for this platform.')
+
             try:
-                source = await self._facebook().get_authorized_source(record.video_id)
-                media = await open_allowed_media(
-                    source.source_url,
+                opened = await self._ytdlp_provider.download_video(
+                    url=record.lookup.webpage_url or f'https://www.{record.platform}.com/watch?v={record.video_id}',
+                    job_id=job.job_id,
+                    quality_id=job.quality_id,
                     timeout_ms=self._config.download_timeout_ms,
                     max_bytes=self._config.max_download_bytes,
-                    client_factory=self._media_client_factory,
+                    platform=record.platform,
+                    video_id=record.video_id,
+                    title=record.lookup.title,
                 )
             except Exception as error:
-                api_error = error if isinstance(error, ApiError) else ApiError(502, 'VIDEO_NOT_AVAILABLE', 'The video file could not be transferred.')
+                api_error = error if isinstance(error, ApiError) else ApiError(503, 'VIDEO_NOT_AVAILABLE', 'The video file could not be transferred.')
                 self._jobs.update(job.job_id, status='failed', error_code=api_error.code, error_message=api_error.message)
                 raise api_error from None
 
-            self._jobs.update(job.job_id, status='streaming')
             return OpenedDownload(
-                stream=self._track(job.job_id, media.stream),
-                content_type=media.content_type,
-                content_length=media.content_length,
-                filename=source.filename,
+                stream=self._track(job.job_id, opened.stream),
+                content_type=opened.content_type,
+                content_length=opened.content_length,
+                filename=opened.filename,
             )
-
-        if self._ytdlp_provider is None:
-            raise ApiError(503, 'PROVIDER_NOT_CONFIGURED', 'No download provider is configured for this platform.')
-
-        try:
-            opened = await self._ytdlp_provider.download_video(
-                url=record.lookup.webpage_url or f'https://www.{record.platform}.com/watch?v={record.video_id}',
-                job_id=job.job_id,
-                quality_id=job.quality_id,
-                timeout_ms=self._config.download_timeout_ms,
-                max_bytes=self._config.max_download_bytes,
-                platform=record.platform,
-                video_id=record.video_id,
-                title=record.lookup.title,
-            )
-        except Exception as error:
-            api_error = error if isinstance(error, ApiError) else ApiError(502, 'VIDEO_NOT_AVAILABLE', 'The video file could not be transferred.')
-            self._jobs.update(job.job_id, status='failed', error_code=api_error.code, error_message=api_error.message)
-            raise api_error from None
-
-        self._jobs.update(job.job_id, status='streaming')
-        return OpenedDownload(
-            stream=self._track(job.job_id, opened.stream),
-            content_type=opened.content_type,
-            content_length=opened.content_length,
-            filename=opened.filename,
-        )
 
     async def _track(self, job_id: str, stream: AsyncIterator[bytes]) -> AsyncIterator[bytes]:
         try:

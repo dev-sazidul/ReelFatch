@@ -31,6 +31,8 @@ class AppConfig:
     rate_limit_limit: int = 60
     lookup_ttl_ms: int = 600_000
     enable_yt_dlp: bool = True
+    max_concurrent_downloads: int = 4
+    trusted_proxies: tuple[str, ...] = ('127.0.0.1', '::1', '10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16')
 
 
 def load_env_file(path: Path = ENV_FILE) -> None:
@@ -73,6 +75,13 @@ def load_config(env: Mapping[str, str]) -> AppConfig:
     enable_yt_dlp_raw = _trimmed(env, 'ENABLE_YT_DLP').lower()
     enable_yt_dlp = enable_yt_dlp_raw not in ('false', '0', 'no', 'off')
 
+    proxies_raw = _trimmed(env, 'TRUSTED_PROXIES')
+    trusted_proxies = (
+        tuple(p.strip() for p in proxies_raw.split(',') if p.strip())
+        if proxies_raw
+        else ('127.0.0.1', '::1', '10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16')
+    )
+
     return AppConfig(
         port=_integer(env, 'PORT', 3000),
         host=_trimmed(env, 'HOST') or '127.0.0.1',
@@ -87,4 +96,6 @@ def load_config(env: Mapping[str, str]) -> AppConfig:
         rate_limit_limit=_integer(env, 'RATE_LIMIT_LIMIT', 60),
         lookup_ttl_ms=_integer(env, 'LOOKUP_TTL_MS', 600_000),
         enable_yt_dlp=enable_yt_dlp,
+        max_concurrent_downloads=_integer(env, 'MAX_CONCURRENT_DOWNLOADS', 4),
+        trusted_proxies=trusted_proxies,
     )

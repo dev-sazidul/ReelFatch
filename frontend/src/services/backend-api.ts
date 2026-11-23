@@ -1,6 +1,6 @@
 import { VideoLookupError, type AuthorizedVideoProvider, type AuthorizedVideoResult, type DownloadProgress } from '@/services/platform-integrations';
 
-type ApiFailure = { code?: string; message?: string };
+type ApiFailure = { code?: string; message?: string; detail?: string; title?: string };
 
 type LookupResponse = {
   lookupId?: string;
@@ -10,6 +10,13 @@ type LookupResponse = {
   sourceLabel?: string;
   qualities?: AuthorizedVideoResult['qualities'];
   reportedFormats?: AuthorizedVideoResult['reportedFormats'];
+};
+
+type DownloadStatusResponse = {
+  jobId?: string;
+  status?: 'ready' | 'streaming' | 'completed' | 'failed';
+  errorCode?: string;
+  errorMessage?: string;
 };
 
 export function createBackendVideoProvider(baseUrl: string): AuthorizedVideoProvider {
@@ -22,10 +29,10 @@ export function createBackendVideoProvider(baseUrl: string): AuthorizedVideoProv
           method: 'POST',
           headers: { 'content-type': 'application/json', accept: 'application/json' },
           body: JSON.stringify({ url }),
-          signal: signal ?? AbortSignal.timeout(20_000),
+          signal: signal ?? AbortSignal.timeout(25_000),
         });
       } catch {
-        throw new VideoLookupError('The ReelFetch server could not be reached. Start the backend, then try again.', { code: 'SERVER_UNREACHABLE' });
+        throw new VideoLookupError('The ReelFetch server could not be reached. Please try again in a moment.', { code: 'SERVER_UNREACHABLE' });
       }
       const body = await readBody(response);
       if (!response.ok) throw toLookupError(response.status, body);
@@ -53,16 +60,51 @@ export function createBackendVideoProvider(baseUrl: string): AuthorizedVideoProv
       const jobId = (created as { jobId?: string }).jobId;
       if (!jobId) throw new VideoLookupError('The server did not start a download job.', { code: 'INVALID_RESPONSE' });
 
-      let file: Response;
-      try {
-        file = await fetch(`${root}/api/videos/downloads/${jobId}/file`, { signal: AbortSignal.timeout(120_000) });
-      } catch {
-        throw new VideoLookupError('The download connection was interrupted.', { code: 'SERVER_UNREACHABLE' });
+      const fileUrl = `${root}/api/videos/downloads/${encodeURIComponent(jobId)}/file`;
+      triggerNativeDownload(fileUrl);
+      onProgress?.({ loaded: 0 });
+
+      // Poll job status briefly to surface server-side extraction/transfer failures if they occur early
+      for (let attempt = 0; attempt < 6; attempt += 1) {
+        await delay(1000);
+        try {
+          const statusResp = await fetch(`${root}/api/videos/downloads/${encodeURIComponent(jobId)}`, {
+            headers: { accept: 'application/json' },
+            signal: AbortSignal.timeout(8_000),
+          });
+          if (!statusResp.ok) break;
+          const job = (await readBody(statusResp)) as DownloadStatusResponse | null;
+          if (!job) break;
+          if (job.status === 'failed') {
+            throw new VideoLookupError(job.errorMessage || 'The video file could not be transferred.', {
+              code: job.errorCode || 'VIDEO_NOT_AVAILABLE',
+            });
+          }
+          if (job.status === 'completed') {
+            onProgress?.({ loaded: 1, total: 1 });
+            return;
+          }
+        } catch (err) {
+          if (err instanceof VideoLookupError) throw err;
+          break;
+        }
       }
-      if (!file.ok) throw toLookupError(file.status, await readBody(file));
-      await saveFile(file, onProgress);
     },
   };
+}
+
+function triggerNativeDownload(fileUrl: string) {
+  const anchor = document.createElement('a');
+  anchor.href = fileUrl;
+  anchor.rel = 'noopener';
+  anchor.style.display = 'none';
+  document.body.append(anchor);
+  anchor.click();
+  anchor.remove();
+}
+
+function delay(ms: number) {
+  return new Promise((resolve) => window.setTimeout(resolve, ms));
 }
 
 async function requestJson(url: string, init: RequestInit) {
@@ -70,7 +112,7 @@ async function requestJson(url: string, init: RequestInit) {
   try {
     response = await fetch(url, init);
   } catch {
-    throw new VideoLookupError('The ReelFetch server could not be reached. Start the backend, then try again.', { code: 'SERVER_UNREACHABLE' });
+    throw new VideoLookupError('The ReelFetch server could not be reached. Please try again in a moment.', { code: 'SERVER_UNREACHABLE' });
   }
   const body = await readBody(response);
   if (!response.ok) throw toLookupError(response.status, body);
@@ -88,43 +130,24 @@ async function readBody(response: Response) {
 }
 
 function toLookupError(status: number, body: ApiFailure | null) {
-  return new VideoLookupError(body?.message || `The server returned HTTP ${status}.`, {
+  const fallback = body?.detail || body?.title || `The server returned HTTP ${status}.`;
+  return new VideoLookupError(body?.message || fallback, {
     status,
     code: body?.code,
     responseSummary: body?.code,
   });
 }
 
-async function saveFile(response: Response, onProgress?: (progress: DownloadProgress) => void) {
-  const totalHeader = response.headers.get('content-length');
-  const total = totalHeader ? Number(totalHeader) : undefined;
-  const reader = response.body?.getReader();
-  if (!reader) throw new VideoLookupError('The download response did not include a file.', { code: 'INVALID_RESPONSE' });
-
-  const chunks: Uint8Array[] = [];
-  let loaded = 0;
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    if (!value) continue;
-    chunks.push(value);
-    loaded += value.byteLength;
-    onProgress?.({ loaded, total: Number.isFinite(total) ? total : undefined });
+export function filenameFrom(disposition: string | null) {
+  if (!disposition) return 'video.mp4';
+  const utf8Match = disposition.match(/filename\*=UTF-8''([^;\s]+)/i);
+  if (utf8Match?.[1]) {
+    try {
+      return decodeURIComponent(utf8Match[1]);
+    } catch {
+      /* fallback below */
+    }
   }
-
-  const type = response.headers.get('content-type') || 'video/mp4';
-  const blob = new Blob(chunks as BlobPart[], { type });
-  const objectUrl = URL.createObjectURL(blob);
-  const anchor = document.createElement('a');
-  anchor.href = objectUrl;
-  anchor.download = filenameFrom(response.headers.get('content-disposition'));
-  document.body.append(anchor);
-  anchor.click();
-  anchor.remove();
-  URL.revokeObjectURL(objectUrl);
-}
-
-function filenameFrom(disposition: string | null) {
-  const match = disposition?.match(/filename="([A-Za-z0-9._-]+)"/);
-  return match?.[1] || 'video.mp4';
+  const asciiMatch = disposition.match(/filename="([^"]+)"/);
+  return asciiMatch?.[1] || 'video.mp4';
 }

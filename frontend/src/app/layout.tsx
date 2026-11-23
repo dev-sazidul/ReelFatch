@@ -1,6 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react';
 import type { Metadata, Viewport } from 'next';
-import Script from 'next/script';
+import { Inter } from 'next/font/google';
 import { JsonLd } from '@/components/json-ld';
 import { Providers } from '@/app/providers';
 import { brand } from '@/config/brand';
@@ -9,6 +9,12 @@ import pwaConfig from '../../pwa.config.json';
 import { siteGraph } from '@/lib/structured-data';
 import { siteOrigin } from '@/lib/seo';
 import '@/index.css';
+
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteOrigin()),
@@ -43,20 +49,8 @@ const brandColors = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" style={brandColors}>
+    <html lang="en" className={inter.className} style={brandColors}>
       <head>
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-V30LSQ672C" />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', 'G-V30LSQ672C');`,
-          }}
-        />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         {appleSplash.map((splash) => (
           <link key={`${splash.href}-${splash.media}`} rel="apple-touch-startup-image" href={splash.href} media={splash.media} />
@@ -70,13 +64,6 @@ gtag('config', 'G-V30LSQ672C');`,
       <body>
         <JsonLd data={siteGraph()} />
         <Providers>{children}</Providers>
-        <Script id="microsoft-clarity" strategy="afterInteractive">
-          {`(function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "zbyj1kutx9");`}
-        </Script>
       </body>
     </html>
   );

@@ -49,7 +49,7 @@ export function useVideoLookup() {
     try {
       const text = (await navigator.clipboard.readText()).trim();
       if (!text) {
-        setNotice({ kind: 'warning', text: 'Your clipboard is empty. Copy a Facebook link, then try Paste again.' });
+        setNotice({ kind: 'warning', text: 'Your clipboard is empty. Copy a public video link, then try Paste again.' });
         return;
       }
       setUrl(text);

@@ -84,9 +84,9 @@ def test_lookup_body_validation_matches_the_previous_messages(api):
 
 
 def test_download_body_and_ids_are_validated(api):
-    bad = api.post('/api/videos/downloads', json={'lookupId': 'x', 'qualityId': 'hd'})
+    bad = api.post('/api/videos/downloads', json={'lookupId': 'x', 'qualityId': 'hd!'})
     assert bad.status_code == 400
-    assert bad.json()['message'] == 'lookupId must match /^[a-f0-9]{32}$/ regular expression qualityId must be one of the following values: source'
+    assert bad.json()['message'] == 'lookupId must match /^[a-f0-9]{32}$/ regular expression qualityId must be a valid quality identifier'
     missing = api.post('/api/videos/downloads', json={'lookupId': 'a' * 32, 'qualityId': 'source'})
     assert (missing.status_code, missing.json()['code']) == (404, 'LOOKUP_NOT_FOUND')
     assert api.get('/api/videos/lookups/not-an-id').json() == {'code': 'INVALID_REQUEST', 'message': 'The lookup id is not valid.'}
@@ -115,7 +115,7 @@ def test_full_lookup_and_download_flow(api_with_token):
     assert file.status_code == 200
     assert file.content == b'video-bytes'
     assert file.headers['content-type'] == 'video/mp4'
-    assert file.headers['content-disposition'] == f'attachment; filename="facebook-{VIDEO}.mp4"'
+    assert file.headers['content-disposition'].startswith(f'attachment; filename="facebook-{VIDEO}.mp4"')
     assert file.headers['content-length'] == '11'
     assert file.headers['cache-control'] == 'no-store'
     assert api_with_token.get(f'/api/videos/downloads/{job["jobId"]}').json()['status'] == 'completed'

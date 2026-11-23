@@ -36,6 +36,7 @@ type PlatformConfig = {
   intro: string;
   steps: string[];
   note: string;
+  troubleshooting: string[];
   faqs: { question: string; answer: string }[];
 };
 
@@ -91,31 +92,7 @@ export function detectPlatformUrl(rawUrl: string):
       return { kind: 'recognized', platform: matched };
     }
 
-    const hostParts = hostname.split('.');
-    const baseName = hostParts.length >= 2 ? hostParts[hostParts.length - 2] : 'video';
-    const capitalized = baseName.charAt(0).toUpperCase() + baseName.slice(1);
-
-    const genericPlatform: Platform = {
-      id: baseName as any,
-      name: capitalized,
-      icon: 'facebook',
-      domains: [hostname],
-      status: 'Available',
-      seoTitle: `${capitalized} Video Downloader | ReelFetch`,
-      seoDescription: `Check a public ${capitalized} video link on ReelFetch. A download is offered only when that source returns a file.`,
-      headline: `Download ${capitalized} videos`,
-      intro: `Paste a public ${capitalized} video link. ReelFetch lists a file only when the source provides one.`,
-      steps: [
-        'Copy the public video link from the source site.',
-        'Paste it into ReelFetch and choose Find Video.',
-        'Download a quality that is actually listed.',
-      ],
-      note: 'A recognized web address is not a guarantee that a video file is available.',
-      faqs: [],
-      Icon: SiYoutube,
-    };
-
-    return { kind: 'recognized', platform: genericPlatform };
+    return { kind: 'unsupported' };
   } catch {
     return { kind: 'invalid' };
   }

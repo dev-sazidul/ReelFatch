@@ -5,7 +5,7 @@ import { blogs, getBlogPostBySlug } from '@/data/blogs';
 import { buildMetadata } from '@/lib/seo';
 import { getBlogPostJsonLd, getBreadcrumbJsonLd } from '@/lib/structured-data';
 import { DEFAULT_SITE_URL } from '@/config/brand';
-import { FutureSolutionBadge, ecosystemTools } from '@/components/ecosystem-tools';
+import { FutureSolutionBadge } from '@/components/ecosystem-tools';
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -110,31 +110,6 @@ export default async function BlogPostPage({ params }: Props) {
               ReelFetch is a flagship free media utility engineered by <a href="https://futuresolutionai.com" target="_blank" rel="noopener noreferrer">FutureSolutionAI</a>.
               We specialize in custom web applications, SaaS platform development, and AI-driven automation pipelines designed to help content creators, businesses, and digital agencies scale their operations.
             </p>
-          </div>
-
-          <div className="rf-article-ecosystem-box">
-            <span className="rf-eyebrow">Connected Free Creator Tools</span>
-            <h3>Expand Your Media Production Toolkit</h3>
-            <p>
-              Explore our complementary free utilities built to streamline your digital content workflow:
-            </p>
-            <div className="rf-article-ecosystem-grid">
-              {ecosystemTools.map((tool) => (
-                <a
-                  key={tool.name}
-                  href={tool.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rf-article-ecosystem-card"
-                >
-                  <div className="rf-article-ecosystem-card-title">
-                    <strong>{tool.name}</strong>
-                    <ArrowUpRight size={14} />
-                  </div>
-                  <p>{tool.title}</p>
-                </a>
-              ))}
-            </div>
           </div>
 
           <div className="rf-article-navigation">

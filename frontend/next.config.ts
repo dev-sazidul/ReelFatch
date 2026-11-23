@@ -5,6 +5,7 @@ import type { NextConfig } from 'next';
 const apiTarget = (process.env.API_PROXY_TARGET || 'http://127.0.0.1:3000').replace(/\/$/, '');
 
 const nextConfig: NextConfig = {
+  poweredByHeader: false,
   // Keep normal local builds; Docker copies the minimal standalone server into its image.
   output: process.env.DOCKER_BUILD === '1' ? 'standalone' : undefined,
   async headers() {
@@ -27,7 +28,7 @@ const nextConfig: NextConfig = {
   experimental: {
     // Next.js cuts proxied requests off after 30 seconds of silence by default. The API applies
     // its own timeouts (12 s per Facebook call, 120 s per download), so this is only a backstop.
-    proxyTimeout: 300_000,
+    proxyTimeout: 600_000,
     staticGenerationMaxConcurrency: 1,
     staticGenerationRetryCount: 3,
   },

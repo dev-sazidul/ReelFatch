@@ -13,6 +13,7 @@ from app.errors import install_exception_handlers
 from app.health import router as health_router
 from app.http_client import ClientFactory, create_http_client
 from app.providers.facebook.provider import FacebookVideoProvider
+from app.providers.ytdlp_provider import cleanup_stale_temp_files
 from app.rate_limit import RateLimitHeadersMiddleware, Throttler
 from app.videos.router import router as videos_router
 from app.videos.service import VideosService
@@ -37,6 +38,9 @@ def create_app(config: AppConfig | None = None, client_factory: ClientFactory = 
 
     @asynccontextmanager
     async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
+        removed = cleanup_stale_temp_files()
+        if removed:
+            logger.info('Cleaned up %s stale temporary files on startup', removed)
         logger.info('ReelFetch API listening on %s', config.port)
         yield
 

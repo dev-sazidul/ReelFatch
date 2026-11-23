@@ -6,7 +6,6 @@ import { EcosystemSection } from '@/components/ecosystem-tools';
 import { FaqAccordion } from '@/components/faq-accordion';
 import { FeatureGrid } from '@/components/feature-grid';
 import { HowItWorks } from '@/components/how-it-works';
-import { InterfacePreview } from '@/components/interface-preview';
 import { SupportedDevices } from '@/components/supported-devices';
 import { PlatformGrid } from '@/components/platform-list';
 import { VideoResultCard } from '@/components/video-result-card';
@@ -32,7 +31,6 @@ export function HeroSection() {
           onSubmit={(event) => void lookup.submit(event)}
         />
         {lookup.result && lookup.provider && <VideoResultCard result={lookup.result} provider={lookup.provider} />}
-        <InterfacePreview />
       </div>
     </section>
   );

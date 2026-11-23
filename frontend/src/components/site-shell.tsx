@@ -4,6 +4,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ArrowDownToLine, Menu, X } from 'lucide-react';
+import { useCookieConsent } from '@/components/cookie-consent';
 import { AppPromo } from '@/components/pwa/app-promo';
 import { InstallAppButton } from '@/components/pwa/install-app-button';
 import { brand } from '@/config/brand';
@@ -40,6 +41,7 @@ function BrandLink({ testId, onClick }: { testId: string; onClick?: () => void }
 export function SiteShell({ children }: { children: ReactNode }) {
   const location = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const { openSettings } = useCookieConsent();
 
   useEffect(() => {
     setMenuOpen(false);
@@ -116,7 +118,12 @@ export function SiteShell({ children }: { children: ReactNode }) {
 
           <div className="rf-footer-bottom">
             <span>© {new Date().getFullYear()} {brand.name} — A Product of <a href="https://futuresolutionai.com" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', color: 'inherit' }}>FutureSolutionAI</a></span>
-            <span>Download only what you have permission to save.</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+              <button type="button" onClick={openSettings} className="rf-cookie-settings-link" data-testid="button-cookie-settings">
+                Cookie Settings
+              </button>
+              <span>Download only what you have permission to save.</span>
+            </div>
           </div>
         </div>
       </footer>

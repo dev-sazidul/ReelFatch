@@ -116,6 +116,7 @@ export function absoluteUrl(pathname: string) {
 export async function buildMetadata(pathname: string): Promise<Metadata> {
   const metadata = getPageMetadata(pathname);
   const canonical = absoluteUrl(pathname);
+  const ogImageUrl = absoluteUrl('/og-image.png');
   const index = metadata.robots.startsWith('index');
   return {
     title: metadata.title,
@@ -133,8 +134,21 @@ export async function buildMetadata(pathname: string): Promise<Metadata> {
       url: canonical,
       siteName: 'ReelFetch',
       locale: 'en_US',
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: 'ReelFetch — Online Public Video Downloader',
+        },
+      ],
     },
-    twitter: { card: 'summary', title: metadata.title, description: metadata.description },
+    twitter: {
+      card: 'summary_large_image',
+      title: metadata.title,
+      description: metadata.description,
+      images: [ogImageUrl],
+    },
   };
 }
 

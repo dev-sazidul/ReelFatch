@@ -1,20 +1,22 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 import { getPlatformById, getPlatformStatus, platformRegistry } from '@/data/platforms';
-import { getAuthorizedVideoProvider } from '@/services/platform-integrations';
 import { PlatformStatusBadge } from '@/components/platform-list';
+import { VideoResultCard } from '@/components/video-result-card';
+import { VideoUrlForm } from '@/components/video-url-form';
+import { useVideoLookup } from '@/hooks/use-video-lookup';
 import { NotFoundPage } from '@/views/info-pages';
 
 export default function PlatformPage({ slug }: { slug: string }) {
-  const platformId = slug;
-  const platform = getPlatformById(platformId);
+  const platform = getPlatformById(slug);
+  const lookup = useVideoLookup();
 
   if (!platform) return <NotFoundPage />;
 
   const status = getPlatformStatus(platform.id);
-  const hasReadyIntegration = status === 'Available' && Boolean(getAuthorizedVideoProvider(platform.id));
+  const isAvailable = status === 'Available';
   const PlatformIcon = platform.Icon;
 
   return (
@@ -39,18 +41,42 @@ export default function PlatformPage({ slug }: { slug: string }) {
           <div>
             <span className="rf-eyebrow">Service status</span>
             <p>
-              {hasReadyIntegration
-                ? `${platform.name} links can be checked when the video is public. Only listed qualities can be saved.`
-                : `${platform.name} lookup is not available from this server right now.`}
+              {isAvailable
+                ? `${platform.name} links can be checked below when the video is public. Only listed qualities can be saved.`
+                : `${platform.name} downloads are currently ${status} due to platform authentication or server access restrictions.`}
             </p>
           </div>
           <PlatformStatusBadge status={status} />
         </div>
-        <Link href="/#tool" className="rf-button rf-button-primary" data-testid="link-platform-tool">
-          Open the downloader <ArrowRight size={15} />
-        </Link>
+
+        {isAvailable ? (
+          <div style={{ marginBottom: 28 }}>
+            <VideoUrlForm
+              url={lookup.url}
+              notice={lookup.notice}
+              isLoading={lookup.isLoading}
+              onUrlChange={lookup.updateUrl}
+              onPaste={() => void lookup.pasteUrl()}
+              onClear={lookup.clearUrl}
+              onSubmit={(event) => void lookup.submit(event)}
+            />
+            {lookup.result && lookup.provider && <VideoResultCard result={lookup.result} provider={lookup.provider} />}
+          </div>
+        ) : (
+          <div className="rf-status warning" role="note" style={{ marginBottom: 28 }}>
+            <AlertCircle size={16} aria-hidden="true" />
+            <span>
+              {platform.name} is currently marked <strong>{status}</strong>. We do not bypass login walls or platform restrictions.{' '}
+              <Link href="/#platforms" style={{ textDecoration: 'underline', color: 'inherit', fontWeight: 600 }}>
+                View available platforms
+              </Link>
+              .
+            </span>
+          </div>
+        )}
+
         <section className="rf-platform-faq" aria-labelledby="platform-steps-title">
-          <h2 id="platform-steps-title">How to download from {platform.name}</h2>
+          <h2 id="platform-steps-title">How to use ReelFetch for {platform.name}</h2>
           <ol className="rf-steps">
             {platform.steps.map((step, index) => (
               <li className="rf-step" key={step}>
@@ -61,6 +87,18 @@ export default function PlatformPage({ slug }: { slug: string }) {
           </ol>
           <p className="rf-result-note">{platform.note}</p>
         </section>
+
+        {platform.troubleshooting.length > 0 && (
+          <section className="rf-platform-faq" aria-labelledby="platform-troubleshoot-title">
+            <h2 id="platform-troubleshoot-title">{platform.name} troubleshooting</h2>
+            <ul className="rf-prose" style={{ paddingLeft: 20 }}>
+              {platform.troubleshooting.map((tip) => (
+                <li key={tip} style={{ marginBottom: 8 }}>{tip}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+
         <section className="rf-platform-faq" aria-labelledby="platform-faq-title">
           <h2 id="platform-faq-title">About {platform.name} links</h2>
           <div className="rf-faq-list">
@@ -72,6 +110,7 @@ export default function PlatformPage({ slug }: { slug: string }) {
             ))}
           </div>
         </section>
+
         <section className="rf-platform-faq" aria-labelledby="related-title">
           <h2 id="related-title">Other download pages</h2>
           <nav className="rf-related" aria-label="Related platforms">

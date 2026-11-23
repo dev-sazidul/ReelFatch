@@ -12,10 +12,15 @@
       "intro": "Use ReelFetch when you have a public Facebook watch, Reel, or video link and you are allowed to keep a copy. The tool shows only the qualities that link returns.",
       "steps": [
         "Open the public Facebook video or Reel and copy its link.",
-        "Paste the link on the ReelFetch homepage and choose Find Video.",
+        "Paste the link into the downloader above and choose Find Video.",
         "Select a listed quality, then save the file with your browser."
       ],
       "note": "fb.watch and facebook.com/share links are accepted when they resolve to a public video. A recognized link can still fail if the post is private, removed, or region-limited.",
+      "troubleshooting": [
+        "Make sure the post audience is set to Public. Friends-only or private group videos cannot be accessed.",
+        "If using a facebook.com/share/r/ or fb.watch link, verify it opens in an incognito browser window without logging in.",
+        "Videos larger than 512 MB are rejected to keep server transfers reliable."
+      ],
       "faqs": [
         {
           "question": "Which Facebook links can ReelFetch check?",
@@ -40,13 +45,18 @@
       "seoTitle": "YouTube Video Downloader | ReelFetch",
       "seoDescription": "Check a public YouTube video or Shorts link and save a quality YouTube provides. Private, deleted, and blocked videos are not downloaded.",
       "headline": "Download public YouTube videos and Shorts",
-      "intro": "Paste a public YouTube or youtu.be link to see the download options that video exposes. ReelFetch does not bypass private videos, age gates you cannot pass, or region blocks.",
+      "intro": "Paste a public YouTube or youtu.be link to see the download options that video exposes. ReelFetch does not bypass private videos, age gates, or region blocks.",
       "steps": [
         "Copy the public YouTube video or Shorts URL.",
-        "Paste it into ReelFetch and choose Find Video.",
-        "Download one of the qualities shown for that video."
+        "Paste it into the downloader above and choose Find Video.",
+        "Download one of the available qualities shown for that video."
       ],
       "note": "YouTube may change which formats a video offers. If a quality is missing from the list, ReelFetch cannot invent it.",
+      "troubleshooting": [
+        "Confirm the video is Public (not Private, Members-only, or Age-restricted) and playable without signing in.",
+        "Live streams currently in progress cannot be downloaded until the broadcast finishes and is archived.",
+        "If a 1080p or higher stream is selected, the server merges video and audio into MP4 using FFmpeg before streaming."
+      ],
       "faqs": [
         {
           "question": "Can I download a YouTube Short the same way as a normal video?",
@@ -54,7 +64,7 @@
         },
         {
           "question": "Will every YouTube link be downloadable?",
-          "answer": "No. Private, deleted, members-only, and geographically restricted videos can fail even when the URL looks valid."
+          "answer": "No. Private, deleted, members-only, age-gated, and geographically restricted videos can fail even when the URL looks valid."
         },
         {
           "question": "Is ReelFetch an official YouTube app?",
@@ -71,25 +81,30 @@
       "seoTitle": "TikTok Video Downloader | ReelFetch",
       "seoDescription": "Paste a public TikTok video link to see the file options ReelFetch can prepare. Private accounts and removed clips are not downloaded.",
       "headline": "Download public TikTok videos",
-      "intro": "ReelFetch checks public TikTok video links and lists a file when TikTok provides one. Photo posts, private accounts, and deleted clips are outside what this page promises.",
+      "intro": "ReelFetch checks public TikTok video links and lists downloadable qualities when TikTok provides them. Photo slideshows, private accounts, and deleted clips are not supported.",
       "steps": [
         "Copy the link of a public TikTok video.",
-        "Paste it on ReelFetch and choose Find Video.",
+        "Paste it into the downloader above and choose Find Video.",
         "Save a listed file to your browser downloads."
       ],
       "note": "A TikTok URL proves the address shape, not that a video file is still public.",
+      "troubleshooting": [
+        "Photo-only TikTok carousels do not contain a downloadable video stream.",
+        "Ensure the creator's account is public and the clip has not been removed or set to Friends-only.",
+        "If a short vm.tiktok.com link fails, open it in a browser first and copy the full tiktok.com/@user/video/... URL."
+      ],
       "faqs": [
         {
           "question": "Can I download a TikTok video with ReelFetch?",
-          "answer": "You can try any public TikTok video link. ReelFetch downloads a file only when that clip is available to the lookup."
+          "answer": "You can check any public TikTok video link. ReelFetch prepares a download only when that clip is publicly accessible."
         },
         {
           "question": "Does ReelFetch keep a copy of TikTok videos?",
-          "answer": "No. The file is prepared for your download and temporary server data is discarded after the transfer."
+          "answer": "No. The file is streamed for your download and temporary server data is deleted after the transfer."
         },
         {
           "question": "Are private TikTok accounts supported?",
-          "answer": "No. Log in on TikTok if you need to view private content. ReelFetch does not access private accounts."
+          "answer": "No. ReelFetch does not log into TikTok or access private accounts."
         }
       ]
     },
@@ -98,21 +113,26 @@
       "name": "Instagram",
       "icon": "instagram",
       "domains": ["instagram.com"],
-      "status": "Available",
+      "status": "Coming Soon",
       "seoTitle": "Instagram Reels Downloader | ReelFetch",
-      "seoDescription": "Check a public Instagram Reel or video post and download a quality Instagram returns. Private accounts and restricted posts are skipped.",
-      "headline": "Download public Instagram Reels and videos",
-      "intro": "Paste a public Instagram Reel or video post link. ReelFetch shows download choices only when that post exposes a video file. Private profiles are not retrieved.",
+      "seoDescription": "Status and guide for Instagram Reels on ReelFetch. Unauthenticated server lookups are currently limited by Instagram login requirements.",
+      "headline": "Instagram Reels & video status",
+      "intro": "Instagram currently requires authenticated sessions for most media lookups from web servers. Because ReelFetch does not bypass login walls, Instagram downloads are marked Coming Soon.",
       "steps": [
-        "Copy the link of a public Reel or video post.",
-        "Paste it into ReelFetch and choose Find Video.",
-        "Download a quality that appears in the result."
+        "Instagram enforces login-gated responses for automated server requests.",
+        "ReelFetch never uses fake accounts or credential workarounds to bypass restrictions.",
+        "Use our supported platforms (Facebook, YouTube, TikTok) while we evaluate compliant options."
       ],
-      "note": "Stories and private posts are not promised. If Instagram does not return a file, ReelFetch will not create one.",
+      "note": "Stories, private posts, and unauthenticated Reels cannot be reliably retrieved from our server at this time.",
+      "troubleshooting": [
+        "Instagram frequently returns an empty media response to unauthenticated server requests even for public Reels.",
+        "Ensure you are not attempting to download private profile content or Stories.",
+        "Check back for updates if Instagram introduces an authorized public embed/media endpoint."
+      ],
       "faqs": [
         {
-          "question": "Does ReelFetch download Instagram Reels?",
-          "answer": "Public Reels can be checked. You get a file only when Instagram returns one for that link."
+          "question": "Why is Instagram marked Coming Soon?",
+          "answer": "Instagram blocks unauthenticated server-side extraction and requires login cookies. ReelFetch does not bypass platform authentication boundaries."
         },
         {
           "question": "Can private Instagram posts be saved?",
@@ -120,7 +140,7 @@
         },
         {
           "question": "Is ReelFetch part of Instagram?",
-          "answer": "No. ReelFetch is an independent downloader and is not sponsored by Instagram or Meta."
+          "answer": "No. ReelFetch is an independent tool and is not sponsored by Instagram or Meta."
         }
       ]
     },
@@ -129,25 +149,30 @@
       "name": "X",
       "icon": "x",
       "domains": ["x.com", "twitter.com"],
-      "status": "Available",
+      "status": "Coming Soon",
       "seoTitle": "X (Twitter) Video Downloader | ReelFetch",
-      "seoDescription": "Paste a public X or Twitter post link that contains video. ReelFetch lists a download when that post returns a video file.",
-      "headline": "Download public videos from X",
-      "intro": "ReelFetch accepts public x.com and twitter.com links. It can prepare a file when the post contains video. Text-only posts and protected accounts do not produce a download.",
+      "seoDescription": "Status and guide for X (Twitter) videos on ReelFetch. Server-side X video extraction is currently marked Coming Soon.",
+      "headline": "X (Twitter) video downloader status",
+      "intro": "X (formerly Twitter) restricts unauthenticated media API access from server IPs. X video support is currently marked Coming Soon while we verify reliable public extraction.",
       "steps": [
-        "Copy the link of a public post that includes video.",
-        "Paste the x.com or twitter.com URL into ReelFetch.",
-        "Choose Find Video, then save a listed quality."
+        "Verify the post on x.com or twitter.com actually contains an embedded video (not just a GIF link or image).",
+        "X frequently requires guest tokens or authenticated sessions that rate-limit server IPs.",
+        "Use Facebook, YouTube, or TikTok for currently verified downloads."
       ],
-      "note": "Recognizing an X link only means the address is on X. The post still has to contain a public video.",
+      "note": "Text-only posts, image posts, and protected accounts never produce a video download.",
+      "troubleshooting": [
+        "Confirm the tweet contains native video media rather than an external link preview or static image.",
+        "Protected/private X accounts cannot be accessed without logging in.",
+        "Server-side rate limits from X may prevent lookup completion."
+      ],
       "faqs": [
         {
-          "question": "Do both x.com and twitter.com links work?",
-          "answer": "Yes. ReelFetch recognizes public links on both host names and checks them for video."
+          "question": "Why is X marked Coming Soon?",
+          "answer": "Unauthenticated server-side extraction from X is currently rate-limited and has not been reliably verified in production."
         },
         {
           "question": "Can I download a post that is only text or images?",
-          "answer": "No. This page is for posts that contain a video file. Image-only posts are not turned into video."
+          "answer": "No. Image-only or text-only posts cannot be converted into video."
         },
         {
           "question": "Does ReelFetch represent X?",
@@ -160,29 +185,34 @@
       "name": "Pinterest",
       "icon": "pinterest",
       "domains": ["pinterest.com", "pin.it"],
-      "status": "Available",
+      "status": "Coming Soon",
       "seoTitle": "Pinterest Video Downloader | ReelFetch",
-      "seoDescription": "Check a public Pinterest video pin, including pin.it links. Static image pins are not converted into video downloads.",
-      "headline": "Download public Pinterest video pins",
-      "intro": "Paste a public Pinterest or pin.it link when the pin contains video. ReelFetch lists a file only if that pin returns video media.",
+      "seoDescription": "Status and guide for Pinterest video pins on ReelFetch. Pinterest video support is currently marked Coming Soon.",
+      "headline": "Pinterest video pin status",
+      "intro": "Most Pinterest pins are static images or external links rather than hosted MP4 streams. Pinterest video support is currently marked Coming Soon.",
       "steps": [
-        "Copy the public pin link from Pinterest or pin.it.",
-        "Paste it into ReelFetch and choose Find Video.",
-        "Download a quality if the result lists one."
+        "Check whether the pin is an actual video pin rather than a static image or Idea Pin.",
+        "Pinterest video extraction from server IPs is currently unverified and marked Coming Soon.",
+        "Static image pins are never converted into video files."
       ],
-      "note": "Image pins, idea pins without a video file, and private boards are not downloadable videos.",
+      "note": "Image pins, Idea Pins without a video stream, and private boards are not downloadable videos.",
+      "troubleshooting": [
+        "Many pins that look animated or link to external blogs do not host a direct video file on Pinterest.",
+        "If using a pin.it short URL, open it in a browser to see if it resolves to a video pin or an external article.",
+        "Private boards require login and are never accessible."
+      ],
       "faqs": [
         {
-          "question": "Can ReelFetch download Pinterest videos?",
-          "answer": "Public pins that contain video can be checked. The download exists only when Pinterest returns a video file."
+          "question": "Why is Pinterest marked Coming Soon?",
+          "answer": "Pinterest video pin extraction has not yet been reliably verified on our production server."
         },
         {
           "question": "Will an image pin become an MP4?",
-          "answer": "No. ReelFetch does not turn a still image into a video."
+          "answer": "No. ReelFetch never turns a still image into a video."
         },
         {
-          "question": "Are pin.it short links accepted?",
-          "answer": "Yes. Short pin.it links are recognized and then checked like other public Pinterest URLs."
+          "question": "Are pin.it short links recognized?",
+          "answer": "Yes, pin.it URLs are recognized as Pinterest addresses."
         }
       ]
     },
@@ -191,29 +221,34 @@
       "name": "Reddit",
       "icon": "reddit",
       "domains": ["reddit.com", "redd.it"],
-      "status": "Available",
+      "status": "Coming Soon",
       "seoTitle": "Reddit Video Downloader | ReelFetch",
-      "seoDescription": "Paste a public Reddit post with video, including redd.it links. ReelFetch prepares a file when that post exposes video media.",
-      "headline": "Download public Reddit videos",
-      "intro": "ReelFetch checks public Reddit and redd.it links that contain video. Text posts, image posts, and private communities do not produce a video file.",
+      "seoDescription": "Status and guide for Reddit videos on ReelFetch. Reddit currently requires account authentication for server requests.",
+      "headline": "Reddit video downloader status",
+      "intro": "Reddit currently requires account authentication for automated server-side media requests, so Reddit downloads are marked Coming Soon on ReelFetch.",
       "steps": [
-        "Copy the link of a public Reddit post that plays video.",
-        "Paste it into ReelFetch and choose Find Video.",
-        "Save a listed file. Audio is included when the source provides it."
+        "Reddit blocks unauthenticated server requests with an authentication requirement.",
+        "ReelFetch does not use fake accounts or bypass platform access controls.",
+        "Use our verified platforms (Facebook, YouTube, TikTok) for active downloads."
       ],
-      "note": "Some Reddit videos store picture and sound separately. A combined file is available only when the server can prepare one from what Reddit returns.",
+      "note": "Text posts, image posts, and quarantined or private subreddits never produce a video file.",
+      "troubleshooting": [
+        "Reddit server requests currently return an authentication-required error on unauthenticated IPs.",
+        "External video embeds on Reddit (such as YouTube links) should be copied directly from the original video host.",
+        "Private or restricted communities cannot be accessed."
+      ],
       "faqs": [
         {
-          "question": "Does ReelFetch download Reddit videos?",
-          "answer": "Public video posts can be checked. You receive a file only when the post still exposes video media."
+          "question": "Why is Reddit marked Coming Soon?",
+          "answer": "Reddit currently requires account authentication for server-side media extraction, and ReelFetch does not bypass login gates."
         },
         {
-          "question": "Are redd.it links supported?",
-          "answer": "Yes. Short redd.it links are recognized and checked the same way as reddit.com posts."
+          "question": "Are redd.it links recognized?",
+          "answer": "Yes. Both reddit.com and redd.it domains are recognized."
         },
         {
           "question": "Is every Reddit post a video?",
-          "answer": "No. Links, images, and text posts are not downloaded as video."
+          "answer": "No. Image, link, and text posts do not have video files."
         }
       ]
     }

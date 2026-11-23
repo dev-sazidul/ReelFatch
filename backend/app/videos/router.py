@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Any
+from urllib.parse import quote
 
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import Response, StreamingResponse
@@ -46,7 +47,12 @@ async def download_file(job_id: str, service: VideosService = Depends(get_servic
         opened = await service.open_download(job_id)
     except ApiError as error:
         return api_error_response(error, headers=no_store)
-    headers = {**no_store, 'content-disposition': f'attachment; filename="{opened.filename}"'}
+    encoded_filename = quote(opened.filename, safe='A-Za-z0-9._-')
+    ascii_fallback = opened.filename.encode('ascii', 'ignore').decode('ascii') or 'video.mp4'
+    headers = {
+        **no_store,
+        'content-disposition': f'attachment; filename="{ascii_fallback}"; filename*=UTF-8\'\'{encoded_filename}',
+    }
     if opened.content_length is not None:
         headers['content-length'] = str(opened.content_length)
     return StreamingResponse(opened.stream, media_type=opened.content_type, headers=headers)

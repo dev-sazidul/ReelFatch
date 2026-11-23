@@ -11,15 +11,15 @@ const registryPath = path.join(projectRoot, 'src/data/platforms.json');
 const registry = JSON.parse(await readFile(registryPath, 'utf8'));
 
 // Import blogs dynamically from TS
-let blogSlugs = [];
+let blogEntries = [];
 try {
   const { blogs } = await import('../src/data/blogs.ts');
-  blogSlugs = blogs.map((b) => b.slug);
+  blogEntries = blogs.map((b) => ({ slug: b.slug, lastmod: b.updatedAt || b.publishedAt || '2026-11-23' }));
 } catch (err) {
   // Fallback: extract slugs via regex if TS loader fails
   const blogsContent = await readFile(path.join(projectRoot, 'src/data/blogs.ts'), 'utf8');
   const matches = [...blogsContent.matchAll(/slug:\s*['"]([^'"]+)['"]/g)];
-  blogSlugs = matches.map((m) => m[1]);
+  blogEntries = matches.map((m) => ({ slug: m[1], lastmod: '2026-11-23' }));
 }
 
 const DEFAULT_ORIGIN = 'https://bestdownloader.site';
@@ -41,26 +41,28 @@ function escapeXml(value) {
   return value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&apos;');
 }
 
+const CORE_LASTMOD = '2026-11-23';
 const origin = getSiteOrigin();
 const publicRoutes = [
-  { path: '/', priority: '1.0', changefreq: 'weekly' },
-  { path: '/blog', priority: '0.8', changefreq: 'weekly' },
-  { path: '/about', priority: '0.6', changefreq: 'monthly' },
-  { path: '/faq', priority: '0.8', changefreq: 'monthly' },
-  { path: '/contact', priority: '0.4', changefreq: 'yearly' },
-  { path: '/privacy', priority: '0.3', changefreq: 'yearly' },
-  { path: '/terms', priority: '0.3', changefreq: 'yearly' },
-  { path: '/copyright', priority: '0.3', changefreq: 'yearly' },
-  ...blogSlugs.map((slug) => ({ path: `/blog/${slug}`, priority: '0.7', changefreq: 'monthly' })),
+  { path: '/', priority: '1.0', changefreq: 'weekly', lastmod: CORE_LASTMOD },
+  { path: '/blog', priority: '0.8', changefreq: 'weekly', lastmod: CORE_LASTMOD },
+  { path: '/about', priority: '0.6', changefreq: 'monthly', lastmod: CORE_LASTMOD },
+  { path: '/faq', priority: '0.8', changefreq: 'monthly', lastmod: CORE_LASTMOD },
+  { path: '/contact', priority: '0.4', changefreq: 'yearly', lastmod: CORE_LASTMOD },
+  { path: '/privacy', priority: '0.3', changefreq: 'yearly', lastmod: CORE_LASTMOD },
+  { path: '/terms', priority: '0.3', changefreq: 'yearly', lastmod: CORE_LASTMOD },
+  { path: '/copyright', priority: '0.3', changefreq: 'yearly', lastmod: CORE_LASTMOD },
+  ...blogEntries.map(({ slug, lastmod }) => ({ path: `/blog/${slug}`, priority: '0.7', changefreq: 'monthly', lastmod })),
   ...registry.platforms
     .filter((platform) => platform.status === 'Available')
-    .map((platform) => ({ path: `/platform/${platform.id}`, priority: '0.7', changefreq: 'monthly' })),
+    .map((platform) => ({ path: `/platform/${platform.id}`, priority: '0.7', changefreq: 'monthly', lastmod: CORE_LASTMOD })),
 ];
 
 const sitemapUrls = publicRoutes
   .map(
-    ({ path: route, priority, changefreq }) => `  <url>
+    ({ path: route, priority, changefreq, lastmod }) => `  <url>
     <loc>${escapeXml(route === '/' ? origin : new URL(route, `${origin}/`).href)}</loc>
+    <lastmod>${escapeXml(lastmod)}</lastmod>
     <changefreq>${changefreq}</changefreq>
     <priority>${priority}</priority>
   </url>`,

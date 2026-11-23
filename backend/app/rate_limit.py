@@ -5,6 +5,7 @@ A client that goes over the limit is blocked for one window.
 """
 from __future__ import annotations
 
+import ipaddress
 import math
 import time
 from collections import deque
@@ -15,6 +16,54 @@ from fastapi import HTTPException, Request
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 STATE_KEY = 'rate_limit_headers'
+
+
+def _is_trusted_proxy(host: str, trusted_proxies: tuple[str, ...]) -> bool:
+    if not host:
+        return False
+    try:
+        addr = ipaddress.ip_address(host.split('%', 1)[0])
+    except ValueError:
+        return host in trusted_proxies
+    for entry in trusted_proxies:
+        try:
+            if '/' in entry:
+                if addr in ipaddress.ip_network(entry, strict=False):
+                    return True
+            elif addr == ipaddress.ip_address(entry):
+                return True
+        except ValueError:
+            if host == entry:
+                return True
+    return False
+
+
+def _valid_ip(raw: str) -> str | None:
+    candidate = raw.strip()
+    if not candidate:
+        return None
+    try:
+        return str(ipaddress.ip_address(candidate))
+    except ValueError:
+        return None
+
+
+def extract_client_ip(request: Request, trusted_proxies: tuple[str, ...]) -> str:
+    peer = request.client.host if request.client else 'unknown'
+    if not _is_trusted_proxy(peer, trusted_proxies):
+        return peer
+
+    cf_ip = _valid_ip(request.headers.get('cf-connecting-ip', ''))
+    if cf_ip:
+        return cf_ip
+
+    xff = request.headers.get('x-forwarded-for', '')
+    if xff:
+        for part in reversed(xff.split(',')):
+            ip = _valid_ip(part)
+            if ip and not _is_trusted_proxy(ip, trusted_proxies):
+                return ip
+    return peer
 
 
 @dataclass
@@ -75,7 +124,9 @@ class Throttler:
 def throttle(route: str) -> Callable[[Request], Awaitable[None]]:
     async def dependency(request: Request) -> None:
         throttler: Throttler = request.app.state.throttler
-        client = request.client.host if request.client else 'unknown'
+        config = getattr(request.app.state, 'config', None)
+        trusted = getattr(config, 'trusted_proxies', ('127.0.0.1', '::1'))
+        client = extract_client_ip(request, trusted)
         result = throttler.hit(route, client)
         if result.blocked:
             raise HTTPException(429, 'Too Many Requests', headers={'Retry-After': str(result.retry_after_seconds)})

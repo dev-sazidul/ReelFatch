@@ -50,11 +50,16 @@ class LookupStore:
     when more than one API process must see the same lookups; callers keep using this interface.
     """
 
-    def __init__(self, clock: Clock = _now_ms):
+    def __init__(self, clock: Clock = _now_ms, max_entries: int = 1000):
         self._records: dict[str, StoredLookup] = {}
         self._clock = clock
+        self._max_entries = max_entries
 
     def save(self, lookup: ProviderLookup, ttl_ms: int) -> StoredLookup:
+        self._purge()
+        while len(self._records) >= self._max_entries:
+            oldest_key = next(iter(self._records))
+            del self._records[oldest_key]
         record = StoredLookup(lookup=lookup, lookup_id=secrets.token_hex(16), expires_at=self._clock() + ttl_ms)
         self._records[record.lookup_id] = record
         return record
@@ -75,11 +80,16 @@ class LookupStore:
 class DownloadJobStore:
     """In-process download jobs. A queue (for example Redis + a worker) can replace this class later."""
 
-    def __init__(self, clock: Clock = _now_ms):
+    def __init__(self, clock: Clock = _now_ms, max_entries: int = 1000):
         self._jobs: dict[str, DownloadJob] = {}
         self._clock = clock
+        self._max_entries = max_entries
 
     def create(self, lookup_id: str, quality_id: str, ttl_ms: int) -> DownloadJob:
+        self._purge()
+        while len(self._jobs) >= self._max_entries:
+            oldest_key = next(iter(self._jobs))
+            del self._jobs[oldest_key]
         now = self._clock()
         job = DownloadJob(
             job_id=secrets.token_hex(16),
@@ -93,10 +103,16 @@ class DownloadJobStore:
         return job
 
     def get(self, job_id: str) -> DownloadJob | None:
+        self._purge()
         job = self._jobs.get(job_id)
         if job is None or job.expires_at <= self._clock():
             return None
         return job
+
+    def _purge(self) -> None:
+        now = self._clock()
+        for job_id in [key for key, job in self._jobs.items() if job.expires_at <= now]:
+            del self._jobs[job_id]
 
     def update(self, job_id: str, **changes: Any) -> DownloadJob | None:
         job = self.get(job_id)

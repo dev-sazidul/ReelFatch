@@ -61,10 +61,9 @@ export function VideoResultCard({
     try {
       await provider.download?.(result.sourceReference, quality.id, (next) => {
         setProgress(next);
-        const percent = next.total ? Math.min(100, Math.round((next.loaded / next.total) * 100)) : undefined;
-        setDownloadNotice({ kind: 'loading', text: percent === undefined ? 'Downloading…' : `Downloading… ${percent}%` });
+        setDownloadNotice({ kind: 'loading', text: 'Starting download in your browser…' });
       });
-      setDownloadNotice({ kind: 'success', text: 'The file was prepared and your browser was asked to save it.' });
+      setDownloadNotice({ kind: 'success', text: 'Your browser has started downloading the file. Check your Downloads folder or browser download bar.' });
     } catch (error) {
       const text = error instanceof Error ? error.message : 'The download could not be started. Please try again in a moment.';
       setDownloadNotice({ kind: 'error', text });
@@ -107,7 +106,7 @@ export function VideoResultCard({
         </div>
       </div>
       <div className="rf-result-controls">
-        {result.qualities.length ? (
+        {result.qualities.length > 1 ? (
           <>
             <QualitySelector
               legend="Available quality options"
@@ -131,6 +130,21 @@ export function VideoResultCard({
               onClick={() => selectedQuality && void startDownload(selectedQuality)}
             >
               <Download size={16} aria-hidden="true" /> {isDownloading ? 'Starting…' : 'Download'}
+            </button>
+          </>
+        ) : result.qualities.length === 1 ? (
+          <>
+            <p className="rf-result-note">
+              Quality: <strong>{result.qualities[0].label}</strong>
+              {formatFileSize(result.qualities[0].fileSizeBytes) ? ` · ${formatFileSize(result.qualities[0].fileSizeBytes)}` : ''}
+            </p>
+            <button
+              type="button"
+              className="rf-button rf-button-primary"
+              disabled={!result.qualities[0].available || !provider.download || isDownloading}
+              onClick={() => void startDownload(result.qualities[0])}
+            >
+              <Download size={16} aria-hidden="true" /> {isDownloading ? 'Starting…' : `Download ${result.qualities[0].label}`}
             </button>
           </>
         ) : (

@@ -15,6 +15,7 @@ from fastapi import HTTPException, Request
 
 MAX_BODY_BYTES = 100 * 1024
 _LOOKUP_ID = re.compile(r'[a-f0-9]{32}')
+_QUALITY_ID = re.compile(r'^[a-z0-9_-]{1,32}$')
 
 
 def _reject_constant(name: str) -> Any:
@@ -80,8 +81,8 @@ def validate_download(body: dict[str, Any]) -> DownloadRequest:
     if not isinstance(lookup_id, str):
         messages.append('lookupId must be a string')
     quality_id = body.get('qualityId')
-    if quality_id != 'source':
-        messages.append('qualityId must be one of the following values: source')
+    if not (isinstance(quality_id, str) and _QUALITY_ID.fullmatch(quality_id)):
+        messages.append('qualityId must be a valid quality identifier')
     if not isinstance(quality_id, str):
         messages.append('qualityId must be a string')
     _fail(messages)
