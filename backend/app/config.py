@@ -31,6 +31,7 @@ class AppConfig:
     rate_limit_limit: int = 60
     lookup_ttl_ms: int = 600_000
     enable_yt_dlp: bool = True
+    ytdlp_cookies_file: str = ''
     max_concurrent_downloads: int = 4
     trusted_proxies: tuple[str, ...] = ('127.0.0.1', '::1', '10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16')
 
@@ -96,6 +97,7 @@ def load_config(env: Mapping[str, str]) -> AppConfig:
         rate_limit_limit=_integer(env, 'RATE_LIMIT_LIMIT', 60),
         lookup_ttl_ms=_integer(env, 'LOOKUP_TTL_MS', 600_000),
         enable_yt_dlp=enable_yt_dlp,
+        ytdlp_cookies_file=_trimmed(env, 'YTDLP_COOKIES_FILE'),
         max_concurrent_downloads=_integer(env, 'MAX_CONCURRENT_DOWNLOADS', 4),
         trusted_proxies=trusted_proxies,
     )

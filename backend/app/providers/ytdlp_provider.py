@@ -226,6 +226,9 @@ class YtDlpVideoProvider:
         js_runtime = _get_js_runtimes()
         if js_runtime:
             args.extend(['--js-runtimes', js_runtime])
+        cookies_file = self._config.ytdlp_cookies_file
+        if cookies_file and os.path.isfile(cookies_file):
+            args.extend(['--cookies', cookies_file])
         return args
 
     async def _run_subprocess(self, args: list[str], timeout_seconds: float) -> tuple[bytes, bytes]:

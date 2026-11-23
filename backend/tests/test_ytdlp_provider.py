@@ -179,6 +179,18 @@ def test_ytdlp_download_and_stream_cleanup():
             os.remove(sample_file)
 
 
+def test_ytdlp_base_args_includes_cookies_only_when_file_exists(tmp_path):
+    missing_cfg = config(enable_yt_dlp=True, ytdlp_cookies_file=str(tmp_path / 'missing.txt'))
+    assert '--cookies' not in YtDlpVideoProvider(missing_cfg)._base_args()
+
+    cookie_file = tmp_path / 'cookies.txt'
+    cookie_file.write_text('# Netscape HTTP Cookie File\n', encoding='utf-8')
+    valid_cfg = config(enable_yt_dlp=True, ytdlp_cookies_file=str(cookie_file))
+    args = YtDlpVideoProvider(valid_cfg)._base_args()
+    idx = args.index('--cookies')
+    assert args[idx + 1] == str(cookie_file)
+
+
 def test_videos_service_full_ytdlp_flow():
     from app.providers.facebook.provider import FacebookVideoProvider
 
@@ -217,3 +229,15 @@ def test_videos_service_full_ytdlp_flow():
     finally:
         if os.path.exists(sample_file):
             os.remove(sample_file)
+
+
+def test_ytdlp_base_args_includes_cookies_only_when_file_exists(tmp_path):
+    missing_cfg = config(enable_yt_dlp=True, ytdlp_cookies_file=str(tmp_path / 'missing.txt'))
+    assert '--cookies' not in YtDlpVideoProvider(missing_cfg)._base_args()
+
+    cookie_file = tmp_path / 'cookies.txt'
+    cookie_file.write_text('# Netscape HTTP Cookie File\n', encoding='utf-8')
+    valid_cfg = config(enable_yt_dlp=True, ytdlp_cookies_file=str(cookie_file))
+    args = YtDlpVideoProvider(valid_cfg)._base_args()
+    idx = args.index('--cookies')
+    assert args[idx + 1] == str(cookie_file)
