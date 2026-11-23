@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowRight, CircleAlert, Mail, ShieldCheck } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, CircleAlert, Mail, ShieldCheck } from 'lucide-react';
+import { FutureSolutionBadge } from '@/components/ecosystem-tools';
 import { FaqAccordion } from '@/components/faq-accordion';
 import { homeFaq, moreFaq } from '@/content/site';
 
@@ -40,6 +41,32 @@ export function AboutPage() {
         <p>
           Paste a public link from <Link href="/platform/youtube">YouTube</Link>, <Link href="/platform/instagram">Instagram</Link>, <Link href="/platform/tiktok">TikTok</Link>, <Link href="/platform/facebook">Facebook</Link>, <Link href="/platform/x">X</Link>, <Link href="/platform/reddit">Reddit</Link>, or <Link href="/platform/pinterest">Pinterest</Link>. The homepage then lists the qualities that link actually provides.
         </p>
+
+        <div className="rf-about-fsi-callout">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px', flexWrap: 'wrap' }}>
+            <span className="rf-eyebrow" style={{ margin: 0 }}>Parent Innovation Lab</span>
+            <FutureSolutionBadge />
+          </div>
+          <h2 style={{ marginTop: 0 }}>A Product of FutureSolutionAI</h2>
+          <p>
+            ReelFetch is proudly conceived, engineered, and maintained by{' '}
+            <a href="https://futuresolutionai.com" target="_blank" rel="noopener noreferrer" style={{ fontWeight: 600, color: 'hsl(var(--rf-accent))', textDecoration: 'underline' }}>
+              FutureSolutionAI
+            </a>
+            , a digital technology firm specializing in bespoke SaaS development, modern cloud architectures, and AI-powered creator utilities.
+          </p>
+          <p>
+            As part of FutureSolutionAI&apos;s mission to build an accessible, high-performance web ecosystem, ReelFetch operates alongside companion tools including{' '}
+            <a href="https://bestconvert.site" target="_blank" rel="noopener noreferrer" style={{ fontWeight: 600, color: 'hsl(var(--rf-accent))', textDecoration: 'underline' }}>
+              BestConvert
+            </a>{' '}
+            (for rapid video, audio, and document conversion) and{' '}
+            <a href="https://imagecustomize.site" target="_blank" rel="noopener noreferrer" style={{ fontWeight: 600, color: 'hsl(var(--rf-accent))', textDecoration: 'underline' }}>
+              ImageCustomize
+            </a>{' '}
+            (for high-impact thumbnail customization and image compression).
+          </p>
+        </div>
 
         <h2>What a listed platform means</h2>
         <p>

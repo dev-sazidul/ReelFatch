@@ -10,6 +10,20 @@ const publicDirectory = path.join(projectRoot, 'public');
 const registryPath = path.join(projectRoot, 'src/data/platforms.json');
 const registry = JSON.parse(await readFile(registryPath, 'utf8'));
 
+// Import blogs dynamically from TS
+let blogSlugs = [];
+try {
+  const { blogs } = await import('../src/data/blogs.ts');
+  blogSlugs = blogs.map((b) => b.slug);
+} catch (err) {
+  // Fallback: extract slugs via regex if TS loader fails
+  const blogsContent = await readFile(path.join(projectRoot, 'src/data/blogs.ts'), 'utf8');
+  const matches = [...blogsContent.matchAll(/slug:\s*['"]([^'"]+)['"]/g)];
+  blogSlugs = matches.map((m) => m[1]);
+}
+
+const DEFAULT_ORIGIN = 'https://bestdownloader.site';
+
 function getSiteOrigin() {
   const configured = process.env.NEXT_PUBLIC_SITE_URL;
   if (configured) {
@@ -20,7 +34,7 @@ function getSiteOrigin() {
       /* Fall back to the public site when the env value is not a valid origin. */
     }
   }
-  return 'https://bestdownloader.site';
+  return DEFAULT_ORIGIN;
 }
 
 function escapeXml(value) {
@@ -30,24 +44,28 @@ function escapeXml(value) {
 const origin = getSiteOrigin();
 const publicRoutes = [
   { path: '/', priority: '1.0', changefreq: 'weekly' },
+  { path: '/blog', priority: '0.8', changefreq: 'weekly' },
   { path: '/about', priority: '0.6', changefreq: 'monthly' },
   { path: '/faq', priority: '0.8', changefreq: 'monthly' },
   { path: '/contact', priority: '0.4', changefreq: 'yearly' },
   { path: '/privacy', priority: '0.3', changefreq: 'yearly' },
   { path: '/terms', priority: '0.3', changefreq: 'yearly' },
   { path: '/copyright', priority: '0.3', changefreq: 'yearly' },
+  ...blogSlugs.map((slug) => ({ path: `/blog/${slug}`, priority: '0.7', changefreq: 'monthly' })),
   ...registry.platforms
     .filter((platform) => platform.status === 'Available')
     .map((platform) => ({ path: `/platform/${platform.id}`, priority: '0.7', changefreq: 'monthly' })),
 ];
 
-const sitemapUrls = origin
-  ? publicRoutes.map(({ path: route, priority, changefreq }) => `  <url>
+const sitemapUrls = publicRoutes
+  .map(
+    ({ path: route, priority, changefreq }) => `  <url>
     <loc>${escapeXml(route === '/' ? origin : new URL(route, `${origin}/`).href)}</loc>
     <changefreq>${changefreq}</changefreq>
     <priority>${priority}</priority>
-  </url>`).join('\n')
-  : '  <!-- Set NEXT_PUBLIC_SITE_URL to the public HTTPS origin to populate absolute URLs. -->';
+  </url>`,
+  )
+  .join('\n');
 
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -58,13 +76,12 @@ ${sitemapUrls}
 const robots = `User-agent: *
 Allow: /
 Disallow: /api/
-${origin ? `Sitemap: ${origin}/sitemap.xml\n` : '# Set NEXT_PUBLIC_SITE_URL before publishing to add the absolute sitemap URL.\n'}`;
+Sitemap: ${origin}/sitemap.xml
+`;
 
 await Promise.all([
   writeFile(path.join(publicDirectory, 'sitemap.xml'), sitemap, 'utf8'),
   writeFile(path.join(publicDirectory, 'robots.txt'), robots, 'utf8'),
 ]);
 
-if (!origin) {
-  console.warn('SEO sitemap has no URLs yet. Set NEXT_PUBLIC_SITE_URL before publishing.');
-}
+console.log(`Generated SEO sitemap with ${publicRoutes.length} URLs pointing to ${origin}`);

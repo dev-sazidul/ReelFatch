@@ -4,7 +4,11 @@
  */
 export const brand = {
   name: 'ReelFetch',
+  siteUrl: 'https://bestdownloader.site',
   accent: '213 72% 42%',
   accentHover: '213 72% 34%',
   navy: '222 47% 16%',
 } as const;
+
+export const DEFAULT_SITE_URL = 'https://bestdownloader.site';
+

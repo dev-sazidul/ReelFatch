@@ -6,6 +6,11 @@
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://bestdownloader.site/blog</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://bestdownloader.site/about</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -34,6 +39,36 @@
     <loc>https://bestdownloader.site/copyright</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://bestdownloader.site/blog/guide-to-cross-platform-video-archiving</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://bestdownloader.site/blog/mastering-vertical-video-repurposing-shorts-reels-tiktok</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://bestdownloader.site/blog/convert-video-reels-to-audio-mp3-podcast-workflow</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://bestdownloader.site/blog/thumbnail-optimization-science-high-ctr-visuals</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://bestdownloader.site/blog/video-compression-codecs-guide-mp4-av1-vp9-webm</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://bestdownloader.site/blog/automated-content-repurposing-workflow-social-to-multi-channel</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://bestdownloader.site/platform/facebook</loc>

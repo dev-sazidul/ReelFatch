@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import { DEFAULT_SITE_URL } from '@/config/brand';
+import { getBlogPostBySlug } from '@/data/blogs';
 import { getPlatformById, getPlatformStatus } from '@/data/platforms';
 import { getAuthorizedVideoProvider } from '@/services/platform-integrations';
 
@@ -44,10 +46,28 @@ const staticPageMetadata: Record<string, PageMetadata> = {
     description: 'How to send ReelFetch a copyright notice. ReelFetch does not host a video library and is not affiliated with the source platforms.',
     robots: 'index,follow',
   },
+  '/blog': {
+    title: 'Creator & Video Production Blog — ReelFetch',
+    description: 'Expert guides, video optimization strategies, cross-platform media archiving, and creator workflows for high-quality video production.',
+    robots: 'index,follow',
+  },
 };
 
 export function getPageMetadata(pathname: string): PageMetadata {
   const path = pathname.replace(/\/+$/, '') || '/';
+  const blogMatch = path.match(/^\/blog\/([^/]+)$/);
+  if (blogMatch) {
+    const post = getBlogPostBySlug(blogMatch[1]);
+    if (!post) {
+      return { title: 'Blog Post Not Found — ReelFetch', description: 'This ReelFetch blog article could not be found.', robots: 'noindex,follow' };
+    }
+    return {
+      title: `${post.title} — ReelFetch`,
+      description: post.metaDescription || post.excerpt,
+      robots: 'index,follow',
+    };
+  }
+
   const platformMatch = path.match(/^\/platform\/([^/]+)$/);
   if (platformMatch) {
     const platform = getPlatformById(platformMatch[1]);
@@ -117,3 +137,4 @@ export async function buildMetadata(pathname: string): Promise<Metadata> {
     twitter: { card: 'summary', title: metadata.title, description: metadata.description },
   };
 }
+
